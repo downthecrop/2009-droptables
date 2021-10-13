@@ -140,16 +140,8 @@ window.addEventListener('load', (event) => {
         return await response.json();
     }
     async function getDrops() {
-        // CORS error prevents referencing the gitLAB json directly. Github mirror instead (auto syncs every 15 minutes).
-        let link = "https://raw.githubusercontent.com/downthecrop/2009scape-mirror/master/Server/data/configs/drop_tables.json"
-        $.ajax({
-            method: 'GET',
-            url: link,
-            dataType: 'jsonp', //change the datatype to 'jsonp' works in most cases
-            success: (res) => {
-             return res;
-            }
-          })
+        const response = await fetch('./drop_tables.json');
+        return await response.json();
     }
     function main(){
         getNPCIds().then(npcJ => {npcG = npcJ})
