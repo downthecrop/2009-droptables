@@ -1,3 +1,7 @@
+body{
+    margin: 10px !important;
+    background-color: #b8a282 !important;
+}
 .stage {
     display: flex;
     justify-content: center;
@@ -74,8 +78,13 @@
         box-shadow: 10014px 0 0 -5px #9880ff;
    }
 }
+#wrapper{
+    margin: auto;
+    width: 70%;
+}
 td{
-    border: 1px solid black;
+    border: 1px solid #94866d;
+    background-color: #e2dbc8;
     padding: 10px !important;
     text-align: center;
 }
@@ -83,7 +92,8 @@ table {
     border-collapse: collapse;
 }
 tbody{
-    width: 75%;
+    margin: auto;
+    width: 100%;
     display: table;
 }
 .debug{
@@ -97,3 +107,20 @@ tbody{
     max-width: 75%;
     overflow-x: auto;
 }
+
+.always{
+    background-color: #AFEEEE;
+}
+.common{
+    background-color: #56E156;
+}
+.uncommon{
+    background-color: #FFED4C;
+}
+.rare{
+    background-color: #FF863C;
+}
+.veryrare{
+    background-color: #FF6262;
+}
+

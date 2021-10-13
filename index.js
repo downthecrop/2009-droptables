@@ -59,7 +59,7 @@ function test(e){
                         // Rarity (Always)
                         var cell = document.createElement("td");
                         var cellText = document.createTextNode("Always");
-                        cell.bgColor = "#AFEEEE"
+                        cell.className = "always"
                         cell.appendChild(cellText);
                         row.append(cell)
 
@@ -110,15 +110,15 @@ function test(e){
                         // Remove trailing zeros (Tried a bunch of stuff and couldn't get it out without)
                         var cellText = document.createTextNode("1/"+(+parseFloat(100/chance).toFixed(2).replace(/(\.0+|0+)$/, '')));
                         if (chance > 99.99){
-                            cell.bgColor = "#AFEEEE"
+                            cell.className = "always"
                         } else if (chance > 4){
-                            cell.bgColor = "#56E156"
+                            cell.className = "common"
                         } else if (chance > 1) {
-                            cell.bgColor = "#FFED4C"
+                            cell.className = "uncommon"
                         } else if (chance > 0.1){
-                            cell.bgColor = "#FF863C"
+                            cell.className = "rare"
                         } else {
-                            cell.bgColor = "#FF6262"
+                            cell.className = "veryrare"
                         }
                         cell.title = parseFloat((chance).toFixed(2)) + "%"
                         cell.appendChild(cellText);

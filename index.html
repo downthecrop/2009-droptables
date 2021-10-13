@@ -2,12 +2,19 @@
 <script src="./index.js"></script>
 <link rel="stylesheet" href="index.css">
 <link rel="stylesheet" href="bootstrap.min.css">
-<input class="form-control input-lg" placeholder="Monster/NPC Name" onkeydown="test(this);"></input>
-<p>Notes: RDT Slot = Rare Drop Table Roll, Summoning Charms are rolled separately</p>
-<input type="checkbox" id="debug-toggle" name="debug"><lable>Show ID's</lable>
-<div class="loading" style="display: none;">
-    <div class="stage"><h1>Loading JSON</h1></div>
-    <div class="stage"><div class="dot-pulse"></div></div>
+<div id="wrapper">
+    <center>
+        <img src="https://i.imgur.com/RsfVfkB.png">
+        <h2>2009Scape Droptable Tool</h2>
+    </center>
+    <input class="form-control input-lg" placeholder="Monster/NPC Name" onkeydown="test(this);"></input>
+    <center>
+    <p>Notes: RDT Slot = Rare Drop Table, Summoning Charms are rolled separately <input type="checkbox" id="debug-toggle" name="debug"><lable>Show ID's</lable></p>
+    </center>
+    <div class="loading" style="display: none;">
+        <div class="stage"><h1>Loading JSON</h1></div>
+        <div class="stage"><div class="dot-pulse"></div></div>
+    </div>
+    <div id="table"></div>
 </div>
-<div id="table"></div>
 </html>
