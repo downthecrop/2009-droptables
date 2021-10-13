@@ -147,6 +147,7 @@ function test(e){
 }
 
 window.addEventListener('load', (event) => {
+    const queryString = window.location.search;
     async function getNPCIds() {
         const response = await fetch('npc_config.json');
         return await response.json();
@@ -193,6 +194,12 @@ window.addEventListener('load', (event) => {
         if (dropG != undefined && npcG != undefined && itemG != undefined) {
             document.getElementsByClassName("loading")[0].setAttribute("style","display:none;")
             clearInterval(checkExist);
+
+            //Allow users to directly link a table
+            if(window.location.search){
+                document.getElementsByTagName("input")[0].value = window.location.search.substring(1)
+                test(document.getElementsByTagName("input")[0])
+            }
         }
         if (counter > 6)
             document.getElementsByClassName("loading")[0].setAttribute("style","display:block;")
