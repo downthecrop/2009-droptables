@@ -100,13 +100,13 @@ function test(e){
                         } else {
                             var cellText = document.createTextNode("1/"+parseFloat((frac.denominator/frac.numerator).toFixed(2)));
                         }
-                        if (weight > 99.99){
+                        if (chance > 99.99){
                             cell.bgColor = "#AFEEEE"
-                        } else if (weight > 4){
+                        } else if (chance > 4){
                             cell.bgColor = "#56E156"
-                        } else if (weight > 1) {
+                        } else if (chance > 1) {
                             cell.bgColor = "#FFED4C"
-                        } else if (weight > 0.1){
+                        } else if (chance > 0.1){
                             cell.bgColor = "#FF863C"
                         } else {
                             cell.bgColor = "#FF6262"
