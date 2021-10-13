@@ -141,7 +141,7 @@ window.addEventListener('load', (event) => {
     }
     async function getDrops() {
         // CORS error prevents referencing the gitLAB json directly. Github mirror instead (auto syncs every 15 minutes).
-        let link = "https://github.com/downthecrop/2009scape-mirror/blob/master/Server/data/configs/drop_tables.json?raw=true"
+        let link = "https://raw.githubusercontent.com/downthecrop/2009scape-mirror/master/Server/data/configs/drop_tables.json"
         const response = await fetchJsonp(link);
         return await response.json();
     }
