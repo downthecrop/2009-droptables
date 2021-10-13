@@ -98,7 +98,7 @@ function test(e){
                         if (""+frac == "1"){
                             var cellText = document.createTextNode("Always");
                         } else {
-                            var cellText = document.createTextNode("1/"+(frac.denominator/frac.numerator).toFixed(2));
+                            var cellText = document.createTextNode("1/"+parseFloat((frac.denominator/frac.numerator).toFixed(2)));
                         }
                         if (weight > 99.99){
                             cell.bgColor = "#AFEEEE"
@@ -111,7 +111,7 @@ function test(e){
                         } else {
                             cell.bgColor = "#FF6262"
                         }
-                        cell.title = (chance).toFixed(2) + "%"
+                        cell.title = parseFloat((chance).toFixed(2)) + "%"
                         cell.appendChild(cellText);
                         row.append(cell)
 
@@ -140,7 +140,8 @@ window.addEventListener('load', (event) => {
         return await response.json();
     }
     async function getDrops() {
-        const response = await fetch('./drop_tables.json');
+        let link = "https://gitlab.com/2009scape/2009scape/-/raw/master/Server/data/configs/drop_tables.json"
+        const response = await fetch(link);
         return await response.json();
     }
     function main(){
