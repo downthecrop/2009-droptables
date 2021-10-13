@@ -8,11 +8,61 @@ function test(e){
     table.innerHTML = ""
     //Search for matching ID
     Object.keys(npcG).forEach(function(key) {
-        if (value.length > 2 && key.includes(e.value)){
+        if (value.length > 2 && key.toLowerCase().includes(e.value.toLowerCase())){
             for (let i = 0; i < dropG.length; i += 1){
                 if (npcG[key].includes(dropG[i]['ids'])){
+
                     // creates a <table> element and a <tbody> element
                     var tblBody = document.createElement("tbody");
+
+                    // Get the combined weight of everything for later
+                    // Iterating the loop 2 times.. maybe don't do this at home.
+                    let totalWeight = 0.0;
+                    for (let j = 0; j < dropG[i]['main'].length; j += 1){
+                        totalWeight += parseFloat(dropG[i]['main'][j]["weight"])
+                    }
+                    
+                    // Guarantee/Default Droptable Items
+                    for (let j = 0; j < dropG[i]['default'].length; j += 1){
+                        var row = document.createElement("tr");
+                        var cell = document.createElement("td");
+
+                        // Icon Cell
+                        const itemIcon = document.createElement("img");
+                        itemIcon.src = "./items-icons/" + dropG[i]['default'][j]["id"] + ".png"
+                        cell.appendChild(itemIcon);
+                        row.appendChild(cell)
+
+                        // Item Name Cell
+                        var cell = document.createElement("td");
+                        var cellText = document.createTextNode(itemG[dropG[i]['default'][j]["id"]]);
+                        cell.appendChild(cellText);
+                        row.append(cell)
+
+                        // Quantity
+                        var cell = document.createElement("td");
+                        if (dropG[i]['default'][j]["minAmount"] != dropG[i]['default'][j]["maxAmount"]){
+                            amount = dropG[i]['default'][j]["minAmount"] + "-" + dropG[i]['default'][j]["maxAmount"]
+                        } else {
+                            amount = dropG[i]['default'][j]["minAmount"]
+                        }
+                        var cellText = document.createTextNode(amount);
+                        cell.appendChild(cellText);
+                        row.append(cell)
+
+                        // Rarity (Always)
+                        var cell = document.createElement("td");
+                        var cellText = document.createTextNode("Always");
+                        cell.bgColor = "#AFEEEE"
+                        cell.appendChild(cellText);
+                        row.append(cell)
+
+                        // Append the TD items to the Row
+                        tblBody.appendChild(row);
+                    }
+
+
+                    // Normal Droptable Items
                     for (let j = 0; j < dropG[i]['main'].length; j += 1){
                         var row = document.createElement("tr");
                         var cell = document.createElement("td");
@@ -43,11 +93,12 @@ function test(e){
                         // Rarity
                         let weight = parseFloat(dropG[i]['main'][j]["weight"])
                         var cell = document.createElement("td");
-                        var frac = new Fraction(weight/100)
+                        var chance = (weight/totalWeight)*100
+                        var frac = new Fraction(chance/100)
                         if (""+frac == "1"){
                             var cellText = document.createTextNode("Always");
                         } else {
-                            var cellText = document.createTextNode(frac);
+                            var cellText = document.createTextNode("1/"+(frac.denominator/frac.numerator).toFixed(2));
                         }
                         if (weight > 99.99){
                             cell.bgColor = "#AFEEEE"
@@ -60,6 +111,7 @@ function test(e){
                         } else {
                             cell.bgColor = "#FF6262"
                         }
+                        cell.title = (chance).toFixed(2) + "%"
                         cell.appendChild(cellText);
                         row.append(cell)
 
