@@ -358,7 +358,3 @@ Fraction.primeFactors = function(n)
 
     return factors;                  // Return the prime factors
 }
-
-var frac = new Fraction( 0.3435);
-
-console.log(frac.toString());
