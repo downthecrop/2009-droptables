@@ -19,7 +19,7 @@ function test(e){
 
                         // Icon Cell
                         const itemIcon = document.createElement("img");
-                        itemIcon.src = "/items-icons/" + dropG[i]['main'][j]["id"] + ".png"
+                        itemIcon.src = "./items-icons/" + dropG[i]['main'][j]["id"] + ".png"
                         cell.appendChild(itemIcon);
                         row.appendChild(cell)
 
@@ -80,15 +80,15 @@ function test(e){
 
 window.addEventListener('load', (event) => {
     async function getNPCIds() {
-        const response = await fetch('/npc_config.json');
+        const response = await fetch('./npc_config.json');
         return await response.json();
     }
     async function getItemIds() {
-        const response = await fetch('/item_configs.json');
+        const response = await fetch('./item_configs.json');
         return await response.json();
     }
     async function getDrops() {
-        const response = await fetch('/drop_tables.json');
+        const response = await fetch('./drop_tables.json');
         return await response.json();
     }
     function main(){
