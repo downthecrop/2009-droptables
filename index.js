@@ -94,12 +94,7 @@ function test(e){
                         let weight = parseFloat(dropG[i]['main'][j]["weight"])
                         var cell = document.createElement("td");
                         var chance = (weight/totalWeight)*100
-                        var frac = new Fraction(chance/100)
-                        if (""+frac == "1"){
-                            var cellText = document.createTextNode("Always");
-                        } else {
-                            var cellText = document.createTextNode("1/"+parseFloat((frac.denominator/frac.numerator).toFixed(2)));
-                        }
+                        var cellText = document.createTextNode("1/"+parseFloat(100/chance).toFixed(2));
                         if (chance > 99.99){
                             cell.bgColor = "#AFEEEE"
                         } else if (chance > 4){
