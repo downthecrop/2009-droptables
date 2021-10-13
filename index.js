@@ -70,6 +70,8 @@ function test(e){
 
                     // Normal Droptable Items
                     for (let j = 0; j < dropG[i]['main'].length; j += 1){
+                        if(dropG[i]['main'][j]["id"] == "0")
+                            continue
                         var row = document.createElement("tr");
                         var cell = document.createElement("td");
 
@@ -105,7 +107,8 @@ function test(e){
                         let weight = parseFloat(dropG[i]['main'][j]["weight"])
                         var cell = document.createElement("td");
                         var chance = (weight/totalWeight)*100
-                        var cellText = document.createTextNode("1/"+parseFloat(100/chance).toFixed(2));
+                        // Remove trailing zeros (Tried a bunch of stuff and couldn't get it out without)
+                        var cellText = document.createTextNode("1/"+(+parseFloat(100/chance).toFixed(2).replace(/(\.0+|0+)$/, '')));
                         if (chance > 99.99){
                             cell.bgColor = "#AFEEEE"
                         } else if (chance > 4){
@@ -130,7 +133,8 @@ function test(e){
                 let h1 = document.createElement("h1")
                 let debugDiv = document.createElement('div')
                 debugDiv.className = debugClass
-                var debugText = document.createTextNode("id: "+npcG[key]);
+                var debugText = document.createElement('p');
+                debugText.innerHTML = ("ids: "+npcG[key]);
                 debugDiv.appendChild(debugText)
                 h1.innerText = key
                 table.appendChild(h1)
@@ -182,4 +186,17 @@ window.addEventListener('load', (event) => {
         getDrops().then(dropJ => {dropG = dropJ})
     }
     main();
+
+    //Loading GUI
+    let counter = 0;
+    let checkExist = setInterval(function () {
+        if (dropG != undefined && npcG != undefined && itemG != undefined) {
+            document.getElementsByClassName("loading")[0].setAttribute("style","display:none;")
+            clearInterval(checkExist);
+        }
+        if (counter > 6)
+            document.getElementsByClassName("loading")[0].setAttribute("style","display:block;")
+        counter += 1;
+    }, 100);
+
 });
