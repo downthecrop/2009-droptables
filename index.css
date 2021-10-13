@@ -7,3 +7,10 @@ td{
 table {
     border-collapse: collapse;
 }
+
+.debug{
+    display: none;
+}
+.debug-show{
+    display: block;
+}

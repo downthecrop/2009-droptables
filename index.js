@@ -1,6 +1,7 @@
 var npcG
 var dropG
-var itemG = {}
+var itemG
+var debugClass = "debug"
 
 function test(e){
     let value = e.value
@@ -8,7 +9,7 @@ function test(e){
     table.innerHTML = ""
     //Search for matching ID
     Object.keys(npcG).forEach(function(key) {
-        if (value.length > 2 && key.toLowerCase().includes(e.value.toLowerCase())){
+        if (value.length > 1 && key.toLowerCase().includes(e.value.toLowerCase())){
             for (let i = 0; i < dropG.length; i += 1){
                 if (npcG[key].includes(dropG[i]['ids'])){
 
@@ -36,7 +37,12 @@ function test(e){
                         // Item Name Cell
                         var cell = document.createElement("td");
                         var cellText = document.createTextNode(itemG[dropG[i]['default'][j]["id"]]);
+                        var debugDiv = document.createElement('div');
+                        var debugText = document.createTextNode("id: "+dropG[i]['default'][j]["id"]);
+                        debugDiv.className = debugClass
+                        debugDiv.appendChild(debugText)
                         cell.appendChild(cellText);
+                        cell.appendChild(debugDiv);
                         row.append(cell)
 
                         // Quantity
@@ -76,7 +82,12 @@ function test(e){
                         // Item Name Cell
                         var cell = document.createElement("td");
                         var cellText = document.createTextNode(itemG[dropG[i]['main'][j]["id"]]);
+                        var debugDiv = document.createElement('div');
+                        var debugText = document.createTextNode("id: "+dropG[i]['main'][j]["id"]);
+                        debugDiv.className = debugClass
+                        debugDiv.appendChild(debugText)
                         cell.appendChild(cellText);
+                        cell.appendChild(debugDiv)
                         row.append(cell)
 
                         // Quantity
@@ -115,10 +126,16 @@ function test(e){
                     }
                 }
             }
-            if (tblBody.innerText != ""){
+            if (tblBody.innerText){
                 let h1 = document.createElement("h1")
+                let debugDiv = document.createElement('div')
+                debugDiv.className = debugClass
+                var debugText = document.createTextNode("id: "+npcG[key]);
+                debugDiv.appendChild(debugText)
                 h1.innerText = key
                 table.appendChild(h1)
+                table.appendChild(debugDiv)
+
                 document.getElementById("table").appendChild(tblBody)
             }
         }
@@ -127,25 +144,42 @@ function test(e){
 
 window.addEventListener('load', (event) => {
     async function getNPCIds() {
-        const response = await fetch('./npc_config.json');
+        const response = await fetch('npc_config.json');
         return await response.json();
     }
     async function getItemIds() {
-        const response = await fetch('./item_configs.json');
+        const response = await fetch('item_config.json');
         return await response.json();
     }
     async function getDrops() {
-        const response = await fetch('./drop_tables.json');
+        // Mirror fetches changes every 15 minutes from Gitlab
+        const response = await fetch('https://downthecrop.github.io/2009scape-mirror/Server/data/configs/drop_tables.json');
         return await response.json();
     }
+
+    // Toggle Item and NPC ids
+    document.getElementById("debug-toggle").addEventListener("change", function(){
+        if (this.checked){
+            const debug = document.querySelectorAll('.debug');
+            debugClass = "debug-show"
+            debug.forEach(element => {
+                element.className = debugClass;
+            });
+        }
+        else{
+            const debug = document.querySelectorAll('.debug-show');
+            debugClass = "debug"
+            debug.forEach(element => {
+                element.className = debugClass;
+            });
+        }
+    })
+
+    // Fetch JSONS
     function main(){
+        getItemIds().then(itemJ => {itemG = itemJ})
         getNPCIds().then(npcJ => {npcG = npcJ})
         getDrops().then(dropJ => {dropG = dropJ})
-        getItemIds().then(itemJ => {
-            for (let i = 0; i < itemJ.length; i += 1){
-                itemG[itemJ[i]["id"]] = itemJ[i]["name"]
-            }
-        })
     }
     main();
 });

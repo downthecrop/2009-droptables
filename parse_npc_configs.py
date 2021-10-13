@@ -1,3 +1,8 @@
+'''
+Rip only the required information from the
+source json to make things load  faster
+'''
+
 import json
 
 with open('npc_configs.json') as f:
@@ -16,5 +21,5 @@ while i < len(data):
             n[data[i]['name']] = data[i]['id']
     i += 1
 
-with open("sample.json", "w") as outfile:
+with open("npc_config.json", "w") as outfile:
     json.dump(n, outfile)
