@@ -4,12 +4,12 @@ var itemG
 var debugClass = "debug"
 
 function test(e){
-    let value = e.value
+    let value = e.value.toLowerCase().replace(' ','')
     let table = document.getElementById("table")
     table.innerHTML = ""
     //Search for matching ID
     Object.keys(npcG).forEach(function(key) {
-        if (value.length > 1 && key.toLowerCase().includes(e.value.toLowerCase())){
+        if (value.length > 1 && key.toLowerCase().replace(' ','').includes(value)){
             for (let i = 0; i < dropG.length; i += 1){
                 if (npcG[key].includes(dropG[i]['ids'])){
 
