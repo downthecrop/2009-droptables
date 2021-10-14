@@ -160,11 +160,24 @@ function search(e){
                     cell.appendChild(debugDiv)
                     row.append(cell)
 
-                    // Case for the 'Nothing' entry in table (Shows as Dwarf Remains otherwise)
-                    // Re-write image and text to represent 'Nothing'
+                    // Edge Cases
+                    // e.g Case for the 'Nothing' entry in table (Shows as Dwarf Remains otherwise)
+                    // Re-write image and text to represent the differed value
                     if(dropG[i]['main'][j]["id"] == "0"){
                         row.getElementsByTagName('img')[0].src = "./items-icons/nothing.png"
                         row.getElementsByTagName('td')[1].innerText = "Nothing"
+                    }
+                    if(dropG[i]['main'][j]["id"] == "1"){
+                        row.getElementsByTagName('img')[0].src = "./items-icons/2677.png"
+                        row.getElementsByTagName('td')[1].innerText = "Clue Scroll (easy)"
+                    }
+                    if(dropG[i]['main'][j]["id"] == "5733"){
+                        row.getElementsByTagName('img')[0].src = "./items-icons/2801.png"
+                        row.getElementsByTagName('td')[1].innerText = "Clue Scroll (medium)"
+                    }
+                    if(dropG[i]['main'][j]["id"] == "12070"){
+                        row.getElementsByTagName('img')[0].src = "./items-icons/2722.png"
+                        row.getElementsByTagName('td')[1].innerText = "Clue Scroll (hard)"
                     }
 
                     // Quantity
