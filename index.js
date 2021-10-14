@@ -66,7 +66,6 @@ function sortByRarity(table){
 
 function search(e){
     let searchStr = sanitize(e.value)
-    console.log(searchStr)
     let table = document.getElementById("table")
     table.innerHTML = ""
     //Search for matching ID
@@ -247,12 +246,6 @@ function search(e){
 
 window.addEventListener('load', (event) => {
 
-    var siteWidth = 1280;
-    var scale = screen.width /siteWidth;
-
-    document.querySelector('meta[name="viewport"]').setAttribute('content', 'width='+siteWidth+', initial-scale='+scale+'');
-
-    const queryString = window.location.search;
     async function getNPCIds() {
         const response = await fetch('npc_config.json');
         return await response.json();
@@ -297,11 +290,12 @@ window.addEventListener('load', (event) => {
     let counter = 0;
     let checkExist = setInterval(function () {
         if (dropG != undefined && npcG != undefined && itemG != undefined) {
+            // Finished Loading
             clearInterval(checkExist);
             document.getElementsByClassName("loading")[0].setAttribute("style","display:none;")
             genDropIndex(dropG)
 
-            //Allow users to directly link a table
+            // Load directly linked monster if there is a search
             if(window.location.search){
                 document.getElementsByTagName("input")[0].value = window.location.search.substring(1).replaceAll("%20"," ")
                 search(document.getElementsByTagName("input")[0])
