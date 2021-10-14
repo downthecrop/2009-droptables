@@ -123,4 +123,7 @@ tbody{
 .veryrare{
     background-color: #FF6262;
 }
+.hover-link img{
+    padding-left: 10px;
+}
 

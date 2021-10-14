@@ -5,7 +5,7 @@ var debugClass = "debug"
 var indexedDrops = {}
 
 function sanitize(str){
-    return str.replace(' ','').toLowerCase()
+    return str.replaceAll(' ','').toLowerCase()
 }
 
 function genDropIndex(dropTable){
@@ -13,6 +13,54 @@ function genDropIndex(dropTable){
         dropTable[i]['ids'].split(",").forEach(id => {
             indexedDrops[id] = i
         })
+    }
+}
+
+function sortTable(t){
+    for (i in t.path){
+        if(t.path[i].tagName == "TBODY"){
+            sortByRarity(t.path[i])
+        }
+    }
+}
+
+function sortByRarity(table){
+    switching = true;
+    /*Make a loop that will continue until
+    no switching has been done:*/
+    while (switching) {
+        //start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /*Loop through all table rows (except the
+        first, which contains table headers):*/
+        for (i = 0; i < (rows.length - 1); i++) {
+            //start by saying there should be no switching:
+            shouldSwitch = false;
+            /*Get the two elements you want to compare,
+            one from current row and one from the next:*/
+            x = rows[i].getElementsByTagName("TD")[3];
+            y = rows[i + 1].getElementsByTagName("TD")[3];
+
+            // Splt at '/' and divide
+            let xEval = x.innerText.split('/')
+            xEval = parseFloat(xEval[0]/xEval[1])
+            let yEval = y.innerText.split('/')
+            yEval = parseFloat(yEval[0]/yEval[1])
+
+            //check if the two rows should switch place:
+            if (xEval < yEval) {
+                //if so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+            }
+        }
+        if (shouldSwitch) {
+            /*If a switch has been marked, make the switch
+            and mark that a switch has been done:*/
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
     }
 }
 
@@ -93,8 +141,6 @@ function search(e){
 
                 // Normal Droptable Items
                 for (let j = 0; j < dropG[i]['main'].length; j += 1){
-                    if(dropG[i]['main'][j]["id"] == "0")
-                        continue
                     var row = document.createElement("tr");
                     var cell = document.createElement("td");
 
@@ -115,6 +161,13 @@ function search(e){
                     cell.appendChild(debugDiv)
                     row.append(cell)
 
+                    // Case for the 'Nothing' entry in table (Shows as Dwarf Remains otherwise)
+                    // Re-write image and text to represent 'Nothing'
+                    if(dropG[i]['main'][j]["id"] == "0"){
+                        row.getElementsByTagName('img')[0].src = "./items-icons/nothing.png"
+                        row.getElementsByTagName('td')[1].innerText = "Nothing"
+                    }
+
                     // Quantity
                     var cell = document.createElement("td");
                     if (dropG[i]['main'][j]["minAmount"] != dropG[i]['main'][j]["maxAmount"]){
@@ -130,8 +183,10 @@ function search(e){
                     let weight = parseFloat(dropG[i]['main'][j]["weight"])
                     var cell = document.createElement("td");
                     var chance = (weight/totalWeight)*100
+
                     // Remove trailing zeros (Tried a bunch of stuff and couldn't get it out without)
                     var cellText = document.createTextNode("1/"+(+parseFloat(100/chance).toFixed(2).replace(/(\.0+|0+)$/, '')));
+
                     if (chance > 99.99){
                         cell.className = "always"
                     } else if (chance > 4){
@@ -153,6 +208,7 @@ function search(e){
             }
             if (tblBody.innerText){
                 let h1 = document.createElement("h1")
+                h1.className = "hover-link"
                 let debugDiv = document.createElement('div')
                 debugDiv.className = debugClass
                 var debugText = document.createElement('p');
@@ -161,7 +217,29 @@ function search(e){
                 h1.innerText = npcName
                 table.appendChild(h1)
                 table.appendChild(debugDiv)
-                document.getElementById("table").appendChild(tblBody)
+
+                tblBody.addEventListener('click', function(e){
+                    sortTable(e)
+                })
+
+                // Direct linking tooltip
+                h1.addEventListener('mouseenter', function(e){
+                    let linkimg = document.createElement("img");
+                    linkimg.src = "./items-icons/" + "link.png"
+                    linkimg.style.display = "inline"
+                    this.appendChild(linkimg);
+                })
+                h1.addEventListener('click', function(e){
+                    let strip = window.location.toString().split('?')
+                    window.location = strip[0] + "?" + this.innerText
+                })
+                h1.addEventListener('mouseleave', function(e){
+                    let child = this.getElementsByTagName("img")[0]
+                    this.removeChild(child)
+                })
+
+                // Add Table to page, continuue to next Match in Keys
+                table.appendChild(tblBody)
             }
         }
     });
@@ -219,7 +297,7 @@ window.addEventListener('load', (event) => {
 
             //Allow users to directly link a table
             if(window.location.search){
-                document.getElementsByTagName("input")[0].value = window.location.search.substring(1)
+                document.getElementsByTagName("input")[0].value = window.location.search.substring(1).replaceAll("%20"," ")
                 search(document.getElementsByTagName("input")[0])
             }
         }
