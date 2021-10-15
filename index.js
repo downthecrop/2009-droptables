@@ -19,11 +19,7 @@ function genDropIndex(dropTable){
 function sortTable(t){
     for (i in t.path){
         if(t.path[i].tagName == "TBODY"){
-            let sortOrder = true
-            if(t.path[i].className != undefined){
-                sortOrder = (t.path[i].className === 'true');
-            }
-            
+            let sortOrder = (t.path[i].className === 'true');
             sortByRarity(t.path[i],!sortOrder)
         }
     }
