@@ -19,26 +19,24 @@ function genDropIndex(dropTable){
 function sortTable(t){
     for (i in t.path){
         if(t.path[i].tagName == "TBODY"){
-            sortByRarity(t.path[i])
+            let sortOrder = true
+            if(t.path[i].className != undefined){
+                sortOrder = (t.path[i].className === 'true');
+            }
+            
+            sortByRarity(t.path[i],!sortOrder)
         }
     }
 }
 
-function sortByRarity(table){
+function sortByRarity(table,order){
+    table.className = order
     switching = true;
-    /*Make a loop that will continue until
-    no switching has been done:*/
     while (switching) {
-        //start by saying: no switching is done:
         switching = false;
         rows = table.rows;
-        /*Loop through all table rows (except the
-        first, which contains table headers):*/
         for (i = 0; i < (rows.length - 1); i++) {
-            //start by saying there should be no switching:
             shouldSwitch = false;
-            /*Get the two elements you want to compare,
-            one from current row and one from the next:*/
             x = rows[i].getElementsByTagName("TD")[3];
             y = rows[i + 1].getElementsByTagName("TD")[3];
 
@@ -48,16 +46,22 @@ function sortByRarity(table){
             let yEval = y.innerText.split('/')
             yEval = parseFloat(yEval[0]/yEval[1])
 
-            //check if the two rows should switch place:
-            if (xEval < yEval) {
-                //if so, mark as a switch and break the loop:
-                shouldSwitch = true;
-                break;
+            if (order>0){
+                // Rarest LAST
+                if (xEval < yEval) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } 
+            else {
+                // Rarest FIRST
+                if (xEval > yEval) {
+                    shouldSwitch = true;
+                    break;
+                }
             }
         }
         if (shouldSwitch) {
-            /*If a switch has been marked, make the switch
-            and mark that a switch has been done:*/
             rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
             switching = true;
         }
@@ -152,6 +156,28 @@ function search(e){
                     // Item Name Cell
                     var cell = document.createElement("td");
                     var cellText = document.createTextNode(itemG[dropG[i]['main'][j]["id"]]);
+
+                    // Edge cases for cell names
+                    // e.g Case for the 'Nothing' entry in table (Shows as Dwarf Remains otherwise)
+                    // Re-write image and text to represent the differed value
+                    if(dropG[i]['main'][j]["id"] == "0"){
+                        row.getElementsByTagName('img')[0].src = "./items-icons/nothing.png"
+                        cellText = document.createTextNode("Nothing")
+                    }
+                    if(dropG[i]['main'][j]["id"] == "1"){
+                        row.getElementsByTagName('img')[0].src = "./items-icons/2677.png"
+                        cellText = document.createTextNode("Clue Scroll (easy)")
+                    }
+                    if(dropG[i]['main'][j]["id"] == "5733"){
+                        row.getElementsByTagName('img')[0].src = "./items-icons/2801.png"
+                        cellText = document.createTextNode("Clue Scroll (medium)")
+                    }
+                    if(dropG[i]['main'][j]["id"] == "12070"){
+                        row.getElementsByTagName('img')[0].src = "./items-icons/2722.png"
+                        cellText = document.createTextNode("Clue Scroll (hard)")               
+                    }
+                    
+                    // Add Debug ID to Name
                     var debugDiv = document.createElement('div');
                     var debugText = document.createTextNode("id: "+dropG[i]['main'][j]["id"]);
                     debugDiv.className = debugClass
@@ -159,26 +185,6 @@ function search(e){
                     cell.appendChild(cellText);
                     cell.appendChild(debugDiv)
                     row.append(cell)
-
-                    // Edge Cases
-                    // e.g Case for the 'Nothing' entry in table (Shows as Dwarf Remains otherwise)
-                    // Re-write image and text to represent the differed value
-                    if(dropG[i]['main'][j]["id"] == "0"){
-                        row.getElementsByTagName('img')[0].src = "./items-icons/nothing.png"
-                        row.getElementsByTagName('td')[1].innerText = "Nothing"
-                    }
-                    if(dropG[i]['main'][j]["id"] == "1"){
-                        row.getElementsByTagName('img')[0].src = "./items-icons/2677.png"
-                        row.getElementsByTagName('td')[1].innerText = "Clue Scroll (easy)"
-                    }
-                    if(dropG[i]['main'][j]["id"] == "5733"){
-                        row.getElementsByTagName('img')[0].src = "./items-icons/2801.png"
-                        row.getElementsByTagName('td')[1].innerText = "Clue Scroll (medium)"
-                    }
-                    if(dropG[i]['main'][j]["id"] == "12070"){
-                        row.getElementsByTagName('img')[0].src = "./items-icons/2722.png"
-                        row.getElementsByTagName('td')[1].innerText = "Clue Scroll (hard)"
-                    }
 
                     // Quantity
                     var cell = document.createElement("td");

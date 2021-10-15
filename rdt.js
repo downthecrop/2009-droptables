@@ -2,6 +2,57 @@ var dropG
 var itemG
 var debugClass = "debug"
 
+function sortTable(t){
+    for (i in t.path){
+        if(t.path[i].tagName == "TBODY"){
+            let sortOrder = true
+            if(t.path[i].className != undefined){
+                sortOrder = (t.path[i].className === 'true');
+            }
+            sortByRarity(t.path[i],!sortOrder)
+        }
+    }
+}
+
+function sortByRarity(table,order){
+    table.className = order
+    switching = true;
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 0; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[3];
+            y = rows[i + 1].getElementsByTagName("TD")[3];
+
+            // Splt at '/' and divide
+            let xEval = x.innerText.split('/')
+            xEval = parseFloat(xEval[0]/xEval[1])
+            let yEval = y.innerText.split('/')
+            yEval = parseFloat(yEval[0]/yEval[1])
+
+            if (order>0){
+                // Rarest LAST
+                if (xEval < yEval) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } 
+            else {
+                // Rarest FIRST
+                if (xEval > yEval) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+}
+
 function fillRDT(){
     // creates a <table> element and a <tbody> element
     var tblBody = document.createElement("tbody");
@@ -78,7 +129,12 @@ function fillRDT(){
         debugDiv.appendChild(debugText)
         table.appendChild(h1)
         table.appendChild(debugDiv)
-        
+
+        sortByRarity(tblBody,true)
+        tblBody.addEventListener('click', function(e){
+            sortTable(e)
+        })
+
         document.getElementById("table").appendChild(tblBody)
     }
 }
@@ -123,9 +179,9 @@ window.addEventListener('load', (event) => {
     let counter = 0;
     let checkExist = setInterval(function () {
         if (dropG != undefined && itemG != undefined) {
+            clearInterval(checkExist);
             document.getElementsByClassName("loading")[0].setAttribute("style","display:none;")
             fillRDT();
-            clearInterval(checkExist);
         }
         if (counter > 6)
             document.getElementsByClassName("loading")[0].setAttribute("style","display:block;")
