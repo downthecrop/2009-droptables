@@ -42,7 +42,7 @@ function sortByRarity(table,order){
             let yEval = y.innerText.split('/')
             yEval = parseFloat(yEval[0]/yEval[1])
 
-            if (order>0){
+            if (order){
                 // Rarest LAST
                 if (xEval < yEval) {
                     shouldSwitch = true;
