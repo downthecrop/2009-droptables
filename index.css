@@ -96,7 +96,7 @@ tbody{
     width: 100%;
     display: table;
 }
-.debug{
+.debug-hide{
     display: none;
 }
 .debug-show{
