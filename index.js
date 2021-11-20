@@ -209,9 +209,9 @@ window.addEventListener('load', (event) => {
     }
 
     // Fetch JSONS
-    allItems = getItemIds()
-    allNPCs = getNPCIds()
-    allDrops = getDrops()
+    getItemIds().then(j => allItems = j)
+    getNPCIds().then(j => allNPCs = j)
+    getDrops().then(j => allDrops = j)
 
     // Restore Debug setting option
     if (localStorage.getItem('debug') === 'true') {
