@@ -1,4 +1,6 @@
-let npcG, itemG, dropG
+let allNPCs = null
+let allItems = null
+let allDrops = null
 
 let debugClass = "debug-hide"
 let dropMap = {}
@@ -16,39 +18,37 @@ function genDropMap(dropTable) {
 }
 
 function getItemName(id) {
-    return itemG[id]
+    return allItems[id]
 }
 
-function getRarityStyle(chance) {
-    if (chance > 99.99) {
+function rarityStyle(percent) {
+    if (percent > 99.99)
         return "always"
-    } else if (chance > 4) {
+    if (percent > 4)
         return "common"
-    } else if (chance > 1) {
+    if (percent > 1)
         return "uncommon"
-    } else if (chance > 0.1) {
+    if (percent > 0.1)
         return "rare"
-    } else {
-        return "veryrare"
-    }
+    return "veryrare"
 }
 
 function addDisplayItem(id, min, max, weight, totalWeight) {
     let row = $("<tr></tr>")
-    let icon = $("<img>").attr('src', "./items-icons/" + id + ".png");
-    let itemName = $("<td>").text(getItemName(id));
+    let icon = $("<img>").attr('src', "./items-icons/" + id + ".png")
+    let itemName = $("<td>").text(getItemName(id))
     let amount = $("<td>").text((min != max) ? min + "-" + max : min)
+    let debug = $("<div>").text("id: " + id).addClass(debugClass)
+    let rarity = ""
 
-    // Weighting
-    let rarity
+    // Weights
     if (weight != -1) {
         let percent = (weight / totalWeight) * 100
         rarity = $("<td>").text("1/" + (+parseFloat(100 / percent).toFixed(2).replace(/(\.0+|0+)$/, '')))
             .prop('title', parseFloat((percent).toFixed(2)) + "%")
-            .addClass(getRarityStyle(percent))
+            .addClass(rarityStyle(percent))
     } else {
-        rarity = $("<td>").text("Always")
-            .addClass(getRarityStyle(100))
+        rarity = $("<td>").text("Always").addClass(rarityStyle(100))
     }
 
     // Edge Cases
@@ -56,27 +56,21 @@ function addDisplayItem(id, min, max, weight, totalWeight) {
         case 0:
             icon = icon.attr('src', "./items-icons/nothing.png")
             itemName = itemName.text("Nothing")
-            break;
+            break
         case 1:
             icon = icon.attr('src', "./items-icons/2677.png")
             itemName = itemName.text("Clue Scroll (easy)")
-            break;
+            break
         case 5733:
             icon = icon.attr('src', "./items-icons/2801.png")
             itemName = itemName.text("Clue Scroll (medium)")
-            break;
+            break
         case 12070:
             icon = icon.attr('src', "./items-icons/2722.png")
             itemName = itemName.text("Clue Scroll (hard)")
-            break;
+            break
     }
-
-    // Debug item Ids
-    let debug = $("<div>").text("id: " + id)
-        .addClass(debugClass)
-
     return row.append($("<td>").append(icon)).append(itemName.append(debug)).append(amount).append(rarity)[0]
-
 }
 
 function sortByRarity(table, order) {
@@ -118,58 +112,67 @@ function sortByRarity(table, order) {
 
 function search(e) {
     let searchStr = removeSpaces(e.value)
-    let table = document.getElementById("table")
+    let table = document.getElementById("content")
     table.innerHTML = ""
 
     //Search for matching ID
-    Object.keys(npcG).forEach(function (npcName) {
+    Object.keys(allNPCs).forEach(function (npcName) {
         if (searchStr.length > 2 && removeSpaces(npcName).includes(searchStr)) {
 
             console.log(searchStr + " is like " + npcName)
 
-            let tblBody = document.createElement("tbody");
-            let npcID = npcG[npcName].split(",")
+            let npcEntry = $("<tbody>")
+            let npcIds = allNPCs[npcName].split(",")
+            let dropGIndex = null
 
-            npcID.every(id => {
+            npcIds.every(id => {
                 if (dropMap[id]) {
-                    i = dropMap[id]
-                    // Get the combined weight of everything for later
-                    // Iterating the loop 2 times.. maybe don't do this at home.
-                    let totalWeight = 0.0;
-                    for (let j = 0; j < dropG[i]['main'].length; j += 1) {
-                        totalWeight += parseFloat(dropG[i]['main'][j]["weight"])
+
+                    dropGIndex = dropMap[id]
+
+                    // Guaranteed / 'default' drops
+                    for (let j = 0; j < allDrops[dropGIndex]['default'].length; j += 1) {
+                        let id = allDrops[dropGIndex]['default'][j]["id"]
+                        let min = allDrops[dropGIndex]['default'][j]["minAmount"]
+                        let max = allDrops[dropGIndex]['default'][j]["maxAmount"]
+                        npcEntry.append(addDisplayItem(id, min, max, -1, -1))
                     }
 
-                    // Guarantee/Default Droptable Items
-                    for (let j = 0; j < dropG[i]['default'].length; j += 1) {
-                        let id = dropG[i]['default'][j]["id"]
-                        let min = dropG[i]['default'][j]["minAmount"]
-                        let max = dropG[i]['default'][j]["maxAmount"]
-                        tblBody.appendChild(addDisplayItem(id, min, max, -1, totalWeight));
+                    // Calculate combined/total weight of all normal drops
+                    let totalWeight = 0.0
+                    for (let j = 0; j < allDrops[dropGIndex]['main'].length; j += 1) {
+                        totalWeight += parseFloat(allDrops[dropGIndex]['main'][j]["weight"])
                     }
 
-                    // Normal Droptable Items
-                    for (let j = 0; j < dropG[i]['main'].length; j += 1) {
-                        let id = dropG[i]['main'][j]["id"]
-                        let min = dropG[i]['main'][j]["minAmount"]
-                        let max = dropG[i]['main'][j]["maxAmount"]
-                        let weight = parseFloat(dropG[i]['main'][j]["weight"])
-                        tblBody.appendChild(addDisplayItem(id, min, max, weight, totalWeight));
+                    // Normal drops
+                    for (let j = 0; j < allDrops[dropGIndex]['main'].length; j += 1) {
+                        let id = allDrops[dropGIndex]['main'][j]["id"]
+                        let min = allDrops[dropGIndex]['main'][j]["minAmount"]
+                        let max = allDrops[dropGIndex]['main'][j]["maxAmount"]
+                        let weight = parseFloat(allDrops[dropGIndex]['main'][j]["weight"])
+                        npcEntry.append(addDisplayItem(id, min, max, weight, totalWeight))
                     }
                 }
             })
-            if (tblBody.innerText) {
-                let h1 = document.createElement("h1")
-                h1.className = "hover-link"
-                debugDiv = document.createElement('div')
-                debugDiv.className = debugClass
-                debugText = document.createElement('p');
-                debugText.innerHTML = ("ids: " + npcG[npcName]);
-                debugDiv.appendChild(debugText)
-                h1.innerText = npcName
-                table.appendChild(h1)
-                table.appendChild(debugDiv)
+            if (npcEntry) {
+                let h1 = $("<h1>").addClass("hover-link").append($("<div>").text(npcName))
+                    .on('mouseenter', function () {
+                        $(this).text(npcName).append($("<img>").attr('src', "./items-icons/link.png"))
+                    })
+                    .on('click', function () {
+                        window.location = window.location.toString().split('?')[0] + "?" + this.innerText
+                    })
+                    .on('mouseleave', function () {
+                        $(this).find($("img")).remove()
+                    })
 
+                table.appendChild($("<div>").append(h1)
+                                            .append($("<div>")
+                                            .addClass(debugClass)
+                                            .append($("<p>")
+                                            .text("ids: " + allNPCs[npcName])))[0])
+
+                /*
                 // Sort Table on click
                 tblBody.addEventListener('click', function (e) {
                     for (i in e.path) {
@@ -182,50 +185,33 @@ function search(e) {
                         }
                     }
                 })
-
-                // Direct linking tooltip
-                h1.addEventListener('mouseenter', function (e) {
-                    let linkimg = document.createElement("img");
-                    linkimg.src = "./items-icons/link.png"
-                    linkimg.style.display = "inline"
-                    this.appendChild(linkimg);
-                })
-                h1.addEventListener('click', function (e) {
-                    let strip = window.location.toString().split('?')
-                    window.location = strip[0] + "?" + this.innerText
-                })
-                h1.addEventListener('mouseleave', function (e) {
-                    let child = this.getElementsByTagName("img")[0]
-                    this.removeChild(child)
-                })
-
-                // Add Table to page, continue to next Match in Keys
-                table.appendChild(tblBody)
+                */
+                table.appendChild(npcEntry[0])
             }
         }
-    });
+    })
 }
 
 window.addEventListener('load', (event) => {
 
     async function getNPCIds() {
-        const response = await fetch('npc_config.json');
-        return await response.json();
+        const response = await fetch('npc_config.json')
+        return await response.json()
     }
     async function getItemIds() {
-        const response = await fetch('item_config.json');
-        return await response.json();
+        const response = await fetch('item_config.json')
+        return await response.json()
     }
     async function getDrops() {
         // Mirror fetches changes every 15 minutes from Gitlab
-        const response = await fetch('https://downthecrop.github.io/2009scape-mirror/Server/data/configs/drop_tables.json');
-        return await response.json();
+        const response = await fetch('https://downthecrop.github.io/2009scape-mirror/Server/data/configs/drop_tables.json')
+        return await response.json()
     }
 
     // Fetch JSONS
-    getItemIds().then(itemJ => { itemG = itemJ })
-    getNPCIds().then(npcJ => { npcG = npcJ })
-    getDrops().then(dropJ => { dropG = dropJ })
+    allItems = getItemIds()
+    allNPCs = getNPCIds()
+    allDrops = getDrops()
 
     // Restore Debug setting option
     if (localStorage.getItem('debug') === 'true') {
@@ -236,31 +222,24 @@ window.addEventListener('load', (event) => {
     // Toggle Item and NPC ids
     document.getElementById("debug-toggle").addEventListener("change", function () {
         if (this.checked) {
-            const debug = document.querySelectorAll('.debug-hide');
             debugClass = "debug-show"
-            debug.forEach(element => {
-                element.className = debugClass;
-            });
-        }
-        else {
-            const debug = document.querySelectorAll('.debug-show');
+            $(".debug-hide").attr("class", debugClass)
+        } else {
             debugClass = "debug-hide"
-            debug.forEach(element => {
-                element.className = debugClass;
-            });
+            $(".debug-show").attr("class", debugClass)
         }
-        localStorage.setItem('debug', this.checked);
+        localStorage.setItem('debug', this.checked)
     })
 
     // Startup Init
-    let timeout = 0;
-    let checkExist = setInterval(function () {
-        if (dropG != undefined && npcG != undefined && itemG != undefined) {
-            clearInterval(checkExist);
+    let timeout = 0
+    let load = setInterval(function () {
+        if (allDrops && allNPCs && allItems) {
+            clearInterval(load)
 
             // Hide 'Loading JSON' message, Generate Dropmap for faster searching
             document.getElementsByClassName("loading")[0].setAttribute("style", "display:none;")
-            genDropMap(dropG)
+            genDropMap(allDrops)
 
             // Load directly linked monster if there is a search
             if (window.location.search) {
@@ -268,10 +247,9 @@ window.addEventListener('load', (event) => {
                 search(document.getElementsByTagName("input")[0])
             }
         }
-
         // If loading JSONs takes longer than 600ms, show 'Loading JSON' message 
         if (timeout > 6)
             document.getElementsByClassName("loading")[0].setAttribute("style", "display:block;")
-            timeout += 1;
-    }, 100);
-});
+        timeout += 1
+    }, 100)
+})

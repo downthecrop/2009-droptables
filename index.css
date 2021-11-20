@@ -125,5 +125,6 @@ tbody{
 }
 .hover-link img{
     padding-left: 10px;
+    display: "inline";
 }
 
