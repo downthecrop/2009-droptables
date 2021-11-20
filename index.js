@@ -110,13 +110,13 @@ function sortByRarity(table, order) {
     }
 }
 
-function search(e) {
-    let searchStr = removeSpaces(e.value)
+function search(input) {
+    let searchStr = removeSpaces(input.value)
     let table = document.getElementById("content")
     table.innerHTML = ""
 
     //Search for matching ID
-    Object.keys(allNPCs).forEach(function (npcName) {
+    Object.keys(allNPCs).forEach(npcName => {
         if (searchStr.length > 2 && removeSpaces(npcName).includes(searchStr)) {
 
             console.log(searchStr + " is like " + npcName)
@@ -172,20 +172,15 @@ function search(e) {
                                             .append($("<p>")
                                             .text("ids: " + allNPCs[npcName])))[0])
 
-                /*
-                // Sort Table on click
-                tblBody.addEventListener('click', function (e) {
-                    for (i in e.path) {
-                        if (e.path[i].tagName == "TBODY") {
-                            // Classname is used to track the sorting direction
-                            let sortOrder = (e.path[i].className === 'true');
-                            e.path[i].className = !sortOrder
-                            sortByRarity(e.path[i], !sortOrder)
-                            break;
-                        }
-                    }
+
+                npcEntry.on('click', function (e) {
+                    e = e.currentTarget
+                    // Classname is used to track the sorting direction
+                    let sortOrder = (e.className === 'true');
+                    e.className = !sortOrder
+                    sortByRarity(e, !sortOrder)
                 })
-                */
+
                 table.appendChild(npcEntry[0])
             }
         }
