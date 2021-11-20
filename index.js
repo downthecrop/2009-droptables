@@ -1,14 +1,3 @@
-let allNPCs = null
-let allItems = null
-let allDrops = null
-
-let debugClass = "debug-hide"
-let dropMap = {}
-
-function removeSpaces(str) {
-    return str.replaceAll(' ', '').toLowerCase()
-}
-
 function genDropMap(dropTable) {
     for (let i = 0; i < dropTable.length; i += 1) {
         dropTable[i]['ids'].split(",").forEach(id => {
@@ -17,23 +6,7 @@ function genDropMap(dropTable) {
     }
 }
 
-function getItemName(id) {
-    return allItems[id]
-}
-
-function rarityStyle(percent) {
-    if (percent > 99.99)
-        return "always"
-    if (percent > 4)
-        return "common"
-    if (percent > 1)
-        return "uncommon"
-    if (percent > 0.1)
-        return "rare"
-    return "veryrare"
-}
-
-function addDisplayItem(id, min, max, weight, totalWeight) {
+function newDisplayItem(id, min, max, weight, totalWeight) {
     let row = $("<tr></tr>")
     let icon = $("<img>").attr('src', "./items-icons/" + id + ".png")
     let itemName = $("<td>").text(getItemName(id))
@@ -59,55 +32,18 @@ function addDisplayItem(id, min, max, weight, totalWeight) {
             break
         case 1:
             icon = icon.attr('src', "./items-icons/2677.png")
-            itemName = itemName.text("Clue Scroll (easy)")
+            //Clue Scroll (easy)
             break
         case 5733:
+            //Clue Scroll (medium)
             icon = icon.attr('src', "./items-icons/2801.png")
-            itemName = itemName.text("Clue Scroll (medium)")
             break
         case 12070:
+            //Clue Scroll (hard)
             icon = icon.attr('src', "./items-icons/2722.png")
-            itemName = itemName.text("Clue Scroll (hard)")
             break
     }
     return row.append($("<td>").append(icon)).append(itemName.append(debug)).append(amount).append(rarity)[0]
-}
-
-function sortByRarity(table, order) {
-    let switching = true;
-    let shouldSwitch = false;
-
-    while (switching) {
-        switching = false
-        rows = table.rows;
-
-        for (i = 0; i < (rows.length - 1); i++) {
-            let x = rows[i].getElementsByTagName("TD")[3];
-            let y = rows[i + 1].getElementsByTagName("TD")[3];
-
-            // Convert text faction to see rarity
-            let xEval = parseFloat(x.innerText.split('/')[0] / x.innerText.split('/')[1])
-            let yEval = parseFloat(y.innerText.split('/')[0] / y.innerText.split('/')[1])
-
-            if (order) {
-                // Rarest LAST
-                if (xEval < yEval) {
-                    shouldSwitch = true
-                    break;
-                }
-            } else {
-                if (xEval > yEval) {
-                    shouldSwitch = true
-                    break;
-                }
-            }
-            shouldSwitch = false;
-        }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-        }
-    }
 }
 
 function search(input) {
@@ -135,7 +71,7 @@ function search(input) {
                         let id = allDrops[dropGIndex]['default'][j]["id"]
                         let min = allDrops[dropGIndex]['default'][j]["minAmount"]
                         let max = allDrops[dropGIndex]['default'][j]["maxAmount"]
-                        npcEntry.append(addDisplayItem(id, min, max, -1, -1))
+                        npcEntry.append(newDisplayItem(id, min, max, -1, -1))
                     }
 
                     // Calculate combined/total weight of all normal drops
@@ -150,7 +86,7 @@ function search(input) {
                         let min = allDrops[dropGIndex]['main'][j]["minAmount"]
                         let max = allDrops[dropGIndex]['main'][j]["maxAmount"]
                         let weight = parseFloat(allDrops[dropGIndex]['main'][j]["weight"])
-                        npcEntry.append(addDisplayItem(id, min, max, weight, totalWeight))
+                        npcEntry.append(newDisplayItem(id, min, max, weight, totalWeight))
                     }
                 }
             })
@@ -180,52 +116,13 @@ function search(input) {
                     e.className = !sortOrder
                     sortByRarity(e, !sortOrder)
                 })
-
                 table.appendChild(npcEntry[0])
             }
         }
     })
 }
 
-window.addEventListener('load', (event) => {
-
-    async function getNPCIds() {
-        const response = await fetch('npc_config.json')
-        return await response.json()
-    }
-    async function getItemIds() {
-        const response = await fetch('item_config.json')
-        return await response.json()
-    }
-    async function getDrops() {
-        // Mirror fetches changes every 15 minutes from Gitlab
-        const response = await fetch('https://downthecrop.github.io/2009scape-mirror/Server/data/configs/drop_tables.json')
-        return await response.json()
-    }
-
-    // Fetch JSONS
-    getItemIds().then(j => allItems = j)
-    getNPCIds().then(j => allNPCs = j)
-    getDrops().then(j => allDrops = j)
-
-    // Restore Debug setting option
-    if (localStorage.getItem('debug') === 'true') {
-        document.getElementById("debug-toggle").checked = true;
-        debugClass = "debug-show"
-    }
-
-    // Toggle Item and NPC ids
-    document.getElementById("debug-toggle").addEventListener("change", function () {
-        if (this.checked) {
-            debugClass = "debug-show"
-            $(".debug-hide").attr("class", debugClass)
-        } else {
-            debugClass = "debug-hide"
-            $(".debug-show").attr("class", debugClass)
-        }
-        localStorage.setItem('debug', this.checked)
-    })
-
+window.addEventListener('load', () => {
     // Startup Init
     let timeout = 0
     let load = setInterval(function () {

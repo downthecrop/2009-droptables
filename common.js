@@ -1,0 +1,138 @@
+let debugClass = "debug-hide"
+let allNPCs = null
+let allItems = null
+let allDrops = null
+let dropMap = {}
+
+function sortByRarity(table, order) {
+    let switching = true;
+    let shouldSwitch = false;
+
+    while (switching) {
+        switching = false
+        rows = table.rows;
+        let last = rows[0].getElementsByTagName("TD").length - 1
+
+        for (i = 0; i < (rows.length - 1); i++) {
+            let x = rows[i].getElementsByTagName("TD")[last];
+            let y = rows[i + 1].getElementsByTagName("TD")[last];
+
+            // Convert text faction to see rarity
+            let xEval = parseFloat(x.innerText.split('/')[0] / x.innerText.split('/')[1])
+            let yEval = parseFloat(y.innerText.split('/')[0] / y.innerText.split('/')[1])
+
+            // Handle Always
+            if(!x.innerText.includes("/")){
+                xEval = 999
+            }
+            if(!y.innerText.includes("/")){
+                yEval = 999
+            }
+
+            if (order) {
+                // Rarest LAST
+                if (xEval < yEval) {
+                    shouldSwitch = true
+                    break;
+                }
+            } else {
+                if (xEval > yEval) {
+                    shouldSwitch = true
+                    break;
+                }
+            }
+            shouldSwitch = false;
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+}
+
+function getItemName(id) {
+    return allItems[id]
+}
+
+function rarityStyle(percent) {
+    if (percent > 99.99)
+        return "always"
+    if (percent > 4)
+        return "common"
+    if (percent > 1)
+        return "uncommon"
+    if (percent > 0.1)
+        return "rare"
+    return "veryrare"
+}
+
+function prettyName(name){
+    let formatted = ""
+    let parts = name.split("_")
+    let i = 0
+    while (i < parts.length){
+        let part = parts[i]
+        formatted += part[0].toUpperCase() + part.substring(1)
+        i += 1
+        if(i < parts.length)
+            formatted += " "
+    }
+    return formatted
+}
+
+function removeSpaces(str) {
+    return str.replaceAll(' ', '').toLowerCase()
+}
+
+window.addEventListener('load', () => {
+
+    async function getNPCIds() {
+        const response = await fetch('npc_config.json');
+        return await response.json();
+    }
+    async function getItemIds() {
+        const response = await fetch('item_config.json');
+        return await response.json();
+    }
+    async function getDrops() {
+        // Mirror fetches changes every 15 minutes from Gitlab
+        const response = await fetch('https://downthecrop.github.io/2009scape-mirror/Server/data/configs/drop_tables.json');
+        return await response.json();
+    }
+
+    // Fetch JSONS
+    getItemIds().then(j => {
+        // Edge cases
+        j["12070"] = "Clue Scroll (hard)"
+        j["5733"] = "Clue Scroll (medium)"
+        j["1"] = "Clue Scroll (easy)"
+        allItems = j
+    })
+    getNPCIds().then(j => allNPCs = j)
+    getDrops().then(j => allDrops = j)
+
+    // Restore Debug option
+    if (localStorage.getItem('debug') === 'true') {
+        document.getElementById("debug-toggle").checked = true;
+        debugClass = "debug-show"
+    }
+
+    // Toggle Item and NPC ids
+    document.getElementById("debug-toggle").addEventListener("change", function () {
+        if (this.checked) {
+            const debug = document.querySelectorAll('.debug-hide');
+            debugClass = "debug-show"
+            debug.forEach(element => {
+                element.className = debugClass;
+            });
+        }
+        else {
+            const debug = document.querySelectorAll('.debug-show');
+            debugClass = "debug-hide"
+            debug.forEach(element => {
+                element.className = debugClass;
+            });
+        }
+        localStorage.setItem('debug', this.checked);
+    })
+})
