@@ -39,32 +39,33 @@ function search(input) {
 
             let npcEntry = $("<tbody>")
             let npcIds = allNPCs[npcName].split(",")
+            let dropGIndex = null
 
             npcIds.every(id => {
                 if (dropMap[id]) {
-                    
-                    let item = allDrops[dropMap[id]]
-                    
+
+                    dropGIndex = dropMap[id]
+
                     // Guaranteed / 'default' drops
-                    for (const defaultNPC of item['default']) {
-                        let id = defaultNPC["id"]
-                        let min = defaultNPC["minAmount"]
-                        let max = defaultNPC["maxAmount"]
+                    for (let j = 0; j < allDrops[dropGIndex]['default'].length; j += 1) {
+                        let id = allDrops[dropGIndex]['default'][j]["id"]
+                        let min = allDrops[dropGIndex]['default'][j]["minAmount"]
+                        let max = allDrops[dropGIndex]['default'][j]["maxAmount"]
                         npcEntry.append(newDisplayItem(id, min, max, -1, -1))
                     }
 
                     // Calculate combined/total weight of all normal drops
                     let totalWeight = 0.0
-                    for (let j = 0; j < item['main'].length; j += 1) {
-                        totalWeight += parseFloat(item['main'][j]["weight"])
+                    for (let j = 0; j < allDrops[dropGIndex]['main'].length; j += 1) {
+                        totalWeight += parseFloat(allDrops[dropGIndex]['main'][j]["weight"])
                     }
 
                     // Normal drops
-                    for (const normalNPC of item['default']) {
-                        let id = normalNPC["id"]
-                        let min = normalNPC["minAmount"]
-                        let max = normalNPC["maxAmount"]
-                        let weight = parseFloat(normalNPC["weight"])
+                    for (let j = 0; j < allDrops[dropGIndex]['main'].length; j += 1) {
+                        let id = allDrops[dropGIndex]['main'][j]["id"]
+                        let min = allDrops[dropGIndex]['main'][j]["minAmount"]
+                        let max = allDrops[dropGIndex]['main'][j]["maxAmount"]
+                        let weight = parseFloat(allDrops[dropGIndex]['main'][j]["weight"])
                         npcEntry.append(newDisplayItem(id, min, max, weight, totalWeight))
                     }
                 }
