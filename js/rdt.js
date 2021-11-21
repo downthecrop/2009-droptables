@@ -76,7 +76,7 @@ function fillRDT(){
 
         // Icon Cell
         const itemIcon = document.createElement("img");
-        itemIcon.src = "./css/items-icons/" + dropG[j]["id"] + ".png"
+        itemIcon.src = "./img/items/" + dropG[j]["id"] + ".png"
         cell.appendChild(itemIcon);
         row.appendChild(cell)
 
