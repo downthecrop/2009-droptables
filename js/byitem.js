@@ -102,20 +102,22 @@ function search(e) {
             for(const npc of npcIDs){
                 if (getNPCName(npc) != npcName && getNPCName(npc) != undefined){
                     npcName = getNPCName(npc)
-                    // For monsters dropping the same ID in different ways (count) increment index
-                    try{
-                        allNPCs[npcName][itemName].every(item => {
-                            itemDisplay.append(newDisplayItem(npcName,item.id, item.minAmount, item.maxAmount, item.weight, allNPCs[npcName].totalWeight))
-                        })
-                    } catch(e) {
-                        console.log("error in" + e)
+                        if (allNPCs[npcName][itemName]){
+                        // For monsters dropping the same ID in different ways (count) increment index
+                        try{
+                            for (const item of allNPCs[npcName][itemName]){
+                                itemDisplay.append(newDisplayItem(npcName,item.id, item.minAmount, item.maxAmount, item.weight, allNPCs[npcName].totalWeight))
+                            }
+                        } catch(e) {
+                            console.log("error in" + e)
+                        }
                     }
-                } 
+                }
             }
             if(itemDisplay[0].childElementCount > 0){
                 let h1 = $("<h1>").addClass("hover-link").append($("<div>").text(prettyName(itemName)))
                     .on('mouseenter', function () {
-                        $(this).text(prettyName(itemName)).append($("<img>").attr('src', "./css/items-icons/link.png"))
+                        $(this).text(prettyName(itemName)).append($("<img>").attr('src', "./img/items/link.png"))
                     })
                     .on('click', function () {
                         window.location = window.location.toString().split('?')[0] + "?" + this.innerText

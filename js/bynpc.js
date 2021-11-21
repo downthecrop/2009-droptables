@@ -73,7 +73,7 @@ function search(input) {
             if (npcEntry[0].childElementCount > 0) {
                 let h1 = $("<h1>").addClass("hover-link").append($("<div>").text(npcName))
                     .on('mouseenter', function () {
-                        $(this).text(npcName).append($("<img>").attr('src', "./css/items-icons/link.png"))
+                        $(this).text(npcName).append($("<img>").attr('src', "./img/items/link.png"))
                     })
                     .on('click', function () {
                         window.location = window.location.toString().split('?')[0] + "?" + this.innerText
