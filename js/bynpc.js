@@ -8,7 +8,7 @@ function genDropMap(dropTable) {
 
 function newDisplayItem(id, min, max, weight, totalWeight) {
     let row = $("<tr></tr>")
-    let icon = $("<img>").attr('src', "./items-icons/" + id + ".png")
+    let icon = $("<img>").attr('src', iconURL(id))
     let itemName = $("<td>").text(getItemName(id))
     let amount = $("<td>").text((min != max) ? min + "-" + max : min)
     let debug = $("<div>").text("id: " + id).addClass(debugClass)
@@ -22,26 +22,6 @@ function newDisplayItem(id, min, max, weight, totalWeight) {
             .addClass(rarityStyle(percent))
     } else {
         rarity = $("<td>").text("Always").addClass(rarityStyle(100))
-    }
-
-    // Edge Cases
-    switch (parseInt(id)) {
-        case 0:
-            icon = icon.attr('src', "./items-icons/nothing.png")
-            itemName = itemName.text("Nothing")
-            break
-        case 1:
-            icon = icon.attr('src', "./items-icons/2677.png")
-            //Clue Scroll (easy)
-            break
-        case 5733:
-            //Clue Scroll (medium)
-            icon = icon.attr('src', "./items-icons/2801.png")
-            break
-        case 12070:
-            //Clue Scroll (hard)
-            icon = icon.attr('src', "./items-icons/2722.png")
-            break
     }
     return row.append($("<td>").append(icon)).append(itemName.append(debug)).append(amount).append(rarity)[0]
 }
@@ -59,41 +39,40 @@ function search(input) {
 
             let npcEntry = $("<tbody>")
             let npcIds = allNPCs[npcName].split(",")
-            let dropGIndex = null
 
             npcIds.every(id => {
                 if (dropMap[id]) {
-
-                    dropGIndex = dropMap[id]
-
+                    
+                    let item = allDrops[dropMap[id]]
+                    
                     // Guaranteed / 'default' drops
-                    for (let j = 0; j < allDrops[dropGIndex]['default'].length; j += 1) {
-                        let id = allDrops[dropGIndex]['default'][j]["id"]
-                        let min = allDrops[dropGIndex]['default'][j]["minAmount"]
-                        let max = allDrops[dropGIndex]['default'][j]["maxAmount"]
+                    for (const defaultNPC of item['default']) {
+                        let id = defaultNPC["id"]
+                        let min = defaultNPC["minAmount"]
+                        let max = defaultNPC["maxAmount"]
                         npcEntry.append(newDisplayItem(id, min, max, -1, -1))
                     }
 
                     // Calculate combined/total weight of all normal drops
                     let totalWeight = 0.0
-                    for (let j = 0; j < allDrops[dropGIndex]['main'].length; j += 1) {
-                        totalWeight += parseFloat(allDrops[dropGIndex]['main'][j]["weight"])
+                    for (let j = 0; j < item['main'].length; j += 1) {
+                        totalWeight += parseFloat(item['main'][j]["weight"])
                     }
 
                     // Normal drops
-                    for (let j = 0; j < allDrops[dropGIndex]['main'].length; j += 1) {
-                        let id = allDrops[dropGIndex]['main'][j]["id"]
-                        let min = allDrops[dropGIndex]['main'][j]["minAmount"]
-                        let max = allDrops[dropGIndex]['main'][j]["maxAmount"]
-                        let weight = parseFloat(allDrops[dropGIndex]['main'][j]["weight"])
+                    for (const normalNPC of item['default']) {
+                        let id = normalNPC["id"]
+                        let min = normalNPC["minAmount"]
+                        let max = normalNPC["maxAmount"]
+                        let weight = parseFloat(normalNPC["weight"])
                         npcEntry.append(newDisplayItem(id, min, max, weight, totalWeight))
                     }
                 }
             })
-            if (npcEntry) {
+            if (npcEntry[0].childElementCount > 0) {
                 let h1 = $("<h1>").addClass("hover-link").append($("<div>").text(npcName))
                     .on('mouseenter', function () {
-                        $(this).text(npcName).append($("<img>").attr('src', "./items-icons/link.png"))
+                        $(this).text(npcName).append($("<img>").attr('src', "./css/items-icons/link.png"))
                     })
                     .on('click', function () {
                         window.location = window.location.toString().split('?')[0] + "?" + this.innerText
@@ -107,7 +86,6 @@ function search(input) {
                                             .addClass(debugClass)
                                             .append($("<p>")
                                             .text("ids: " + allNPCs[npcName])))[0])
-
 
                 npcEntry.on('click', function (e) {
                     e = e.currentTarget

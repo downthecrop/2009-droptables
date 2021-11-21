@@ -50,6 +50,24 @@ function sortByRarity(table, order) {
     }
 }
 
+function iconURL(id){
+    switch (parseInt(id)) {
+        case 0:
+            return "./img/items/nothing.png"
+        case 1:
+            //Clue Scroll (easy)
+            return "./img/items/2677.png"
+        case 5733:
+            //Clue Scroll (medium)
+            return "./img/items/2801.png"
+        case 12070:
+            //Clue Scroll (hard)
+            return "./img/items/2722.png"
+        default:
+            return "./img/items/"+id+".png"
+    }
+}
+
 function getItemName(id) {
     return allItems[id]
 }
@@ -87,11 +105,11 @@ function removeSpaces(str) {
 window.addEventListener('load', () => {
 
     async function getNPCIds() {
-        const response = await fetch('npc_config.json');
+        const response = await fetch('./json/npc_config.json');
         return await response.json();
     }
     async function getItemIds() {
-        const response = await fetch('item_config.json');
+        const response = await fetch('./json/item_config.json');
         return await response.json();
     }
     async function getDrops() {
@@ -103,6 +121,7 @@ window.addEventListener('load', () => {
     // Fetch JSONS
     getItemIds().then(j => {
         // Edge cases
+        j["0"] = "Nothing"
         j["12070"] = "Clue Scroll (hard)"
         j["5733"] = "Clue Scroll (medium)"
         j["1"] = "Clue Scroll (easy)"

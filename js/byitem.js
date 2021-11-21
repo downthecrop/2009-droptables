@@ -13,7 +13,7 @@ class npcObject {
 
 function newDisplayItem(name,id, min, max, weight, totalWeight) {
     let row = $("<tr>")
-    let icon = $("<img>").attr('src', "./items-icons/" + id + ".png")
+    let icon = $("<img>").attr('src', iconURL(id))
     let itemName = $("<td>").text(getItemName(id))
     let npcName = $("<td>").text(name)
     let amount = $("<td>").text((min != max) ? min + "-" + max : min)
@@ -28,26 +28,6 @@ function newDisplayItem(name,id, min, max, weight, totalWeight) {
             .addClass(rarityStyle(percent))
     } else {
         rarity = $("<td>").text("Always").addClass(rarityStyle(100))
-    }
-
-    // Edge Cases
-    switch (parseInt(id)) {
-        case 0:
-            icon = icon.attr('src', "./items-icons/nothing.png")
-            itemName = itemName.text("Nothing")
-            break
-        case 1:
-            icon = icon.attr('src', "./items-icons/2677.png")
-            //Clue Scroll (easy)
-            break
-        case 5733:
-            //Clue Scroll (medium)
-            icon = icon.attr('src', "./items-icons/2801.png")
-            break
-        case 12070:
-            //Clue Scroll (hard)
-            icon = icon.attr('src', "./items-icons/2722.png")
-            break
     }
     return row.append(npcName).append($("<td>").append(icon)).append(itemName.append(debug)).append(amount).append(rarity)[0]
 }
@@ -131,11 +111,11 @@ function search(e) {
                         console.log("error in" + e)
                     }
                 } 
-            }   
-            if(itemDisplay){
+            }
+            if(itemDisplay[0].childElementCount > 0){
                 let h1 = $("<h1>").addClass("hover-link").append($("<div>").text(prettyName(itemName)))
                     .on('mouseenter', function () {
-                        $(this).text(prettyName(itemName)).append($("<img>").attr('src', "./items-icons/link.png"))
+                        $(this).text(prettyName(itemName)).append($("<img>").attr('src', "./css/items-icons/link.png"))
                     })
                     .on('click', function () {
                         window.location = window.location.toString().split('?')[0] + "?" + this.innerText

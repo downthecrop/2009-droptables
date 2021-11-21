@@ -1,3 +1,8 @@
+/*
+ * This file doesn't use the common.js functions
+ * which makes it a mess. Tread carefully.
+*/
+
 var dropG
 var itemG
 var debugClass = "debug"
@@ -71,7 +76,7 @@ function fillRDT(){
 
         // Icon Cell
         const itemIcon = document.createElement("img");
-        itemIcon.src = "./items-icons/" + dropG[j]["id"] + ".png"
+        itemIcon.src = "./css/items-icons/" + dropG[j]["id"] + ".png"
         cell.appendChild(itemIcon);
         row.appendChild(cell)
 
@@ -141,32 +146,13 @@ function fillRDT(){
 
 window.addEventListener('load', (event) => {
     async function getItemIds() {
-        const response = await fetch('item_config.json');
+        const response = await fetch('./json/item_config.json');
         return await response.json();
     }
     async function getDrops() {
-        // Mirror fetches changes every 15 minutes from Gitlab
-        const response = await fetch('rdt.json');
+        const response = await fetch('./json/rdt.json');
         return await response.json();
     }
-
-    // Toggle Item and NPC ids
-    document.getElementById("debug-toggle").addEventListener("change", function(){
-        if (this.checked){
-            const debug = document.querySelectorAll('.debug');
-            debugClass = "debug-show"
-            debug.forEach(element => {
-                element.className = debugClass;
-            });
-        }
-        else{
-            const debug = document.querySelectorAll('.debug-show');
-            debugClass = "debug"
-            debug.forEach(element => {
-                element.className = debugClass;
-            });
-        }
-    })
 
     // Fetch JSONS
     function main(){
