@@ -125,7 +125,7 @@ function search(e) {
                     .append($("<div>")
                         .addClass(debugClass)
                         .append($("<p>")
-                        .text("NPC ids: " + npcIDs)))[0])
+                            .text("NPC ids: " + npcIDs)))[0])
 
                 itemDisplay.on('click', function (e) {
                     e = e.currentTarget
@@ -145,9 +145,6 @@ window.addEventListener('load', () => {
     let checkExist = setInterval(function () {
         if (allDrops != undefined && allNPCs != undefined && allItems != undefined) {
             clearInterval(checkExist);
-
-            // Hide 'Loading JSON' message, Generate Dropmap for faster searching
-            document.getElementsByClassName("loading")[0].setAttribute("style", "display:none;")
             mapNPCNames(allNPCs)
             mapNPCItem(allDrops)
             searchURLString()

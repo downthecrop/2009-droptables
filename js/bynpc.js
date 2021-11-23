@@ -83,10 +83,10 @@ function search(input) {
                     })
 
                 table.appendChild($("<div>").append(h1)
-                                            .append($("<div>")
-                                            .addClass(debugClass)
-                                            .append($("<p>")
-                                            .text("ids: " + allNPCs[npcName])))[0])
+                    .append($("<div>")
+                        .addClass(debugClass)
+                        .append($("<p>")
+                            .text("ids: " + allNPCs[npcName])))[0])
 
                 npcEntry.on('click', function (e) {
                     e = e.currentTarget
@@ -106,9 +106,6 @@ window.addEventListener('load', () => {
     let load = setInterval(function () {
         if (allDrops && allNPCs && allItems) {
             clearInterval(load)
-
-            // Hide 'Loading JSON' message, Generate Dropmap for faster searching
-            document.getElementsByClassName("loading")[0].setAttribute("style", "display:none;")
             genDropMap(allDrops)
             searchURLString()
         }

@@ -22,10 +22,10 @@ function sortByRarity(table, order) {
             let yEval = parseFloat(y.innerText.split('/')[0] / y.innerText.split('/')[1])
 
             // Handle Always
-            if(!x.innerText.includes("/")){
+            if (!x.innerText.includes("/")) {
                 xEval = 999
             }
-            if(!y.innerText.includes("/")){
+            if (!y.innerText.includes("/")) {
                 yEval = 999
             }
 
@@ -50,7 +50,7 @@ function sortByRarity(table, order) {
     }
 }
 
-function iconURL(id){
+function iconURL(id) {
     switch (parseInt(id)) {
         case 0:
             return "./img/items/nothing.png"
@@ -64,7 +64,7 @@ function iconURL(id){
             //Clue Scroll (hard)
             return "./img/items/2722.png"
         default:
-            return "./img/items/"+id+".png"
+            return "./img/items/" + id + ".png"
     }
 }
 
@@ -84,15 +84,15 @@ function rarityStyle(percent) {
     return "veryrare"
 }
 
-function prettyName(name){
+function prettyName(name) {
     let formatted = ""
     let parts = name.split("_")
     let i = 0
-    while (i < parts.length){
+    while (i < parts.length) {
         let part = parts[i]
         formatted += part[0].toUpperCase() + part.substring(1)
         i += 1
-        if(i < parts.length)
+        if (i < parts.length)
             formatted += " "
     }
     return formatted
@@ -157,7 +157,7 @@ window.addEventListener('load', () => {
 })
 
 
-function checkTimeout(sec){
+function checkTimeout(sec) {
     // If loading JSONs takes longer than 600ms, show 'Loading JSON' message 
     // refresh the page on a 10 second timeout.
     if (sec > 6) {
@@ -167,7 +167,10 @@ function checkTimeout(sec){
     }
 }
 
-function searchURLString(){
+function searchURLString() {
+    // Clear loading JSON message
+    document.getElementsByClassName("loading")[0].setAttribute("style", "display:none;")
+
     // Load directly linked monster/item if there is a search
     if (window.location.search) {
         document.getElementsByTagName("input")[0].value = window.location.search.substring(1).replaceAll("%20", " ")
