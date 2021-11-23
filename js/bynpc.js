@@ -102,7 +102,6 @@ function search(input) {
 }
 
 window.addEventListener('load', () => {
-    // Startup Init
     let timeout = 0
     let load = setInterval(function () {
         if (allDrops && allNPCs && allItems) {
@@ -111,16 +110,8 @@ window.addEventListener('load', () => {
             // Hide 'Loading JSON' message, Generate Dropmap for faster searching
             document.getElementsByClassName("loading")[0].setAttribute("style", "display:none;")
             genDropMap(allDrops)
-
-            // Load directly linked monster if there is a search
-            if (window.location.search) {
-                document.getElementsByTagName("input")[0].value = window.location.search.substring(1).replaceAll("%20", " ")
-                search(document.getElementsByTagName("input")[0])
-            }
+            searchURLString()
         }
-        // If loading JSONs takes longer than 600ms, show 'Loading JSON' message 
-        if (timeout > 6)
-            document.getElementsByClassName("loading")[0].setAttribute("style", "display:block;")
-        timeout += 1
+        checkTimeout(timeout++)
     }, 100)
 })

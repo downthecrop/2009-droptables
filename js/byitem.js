@@ -3,15 +3,15 @@ let items = {}
 
 class npcObject {
     constructor(ids, name) {
-      this.ids = ids;
-      this.name = name;
-      this.totalWeight = 0
-      this.default = []
-      this.main = []
+        this.ids = ids;
+        this.name = name;
+        this.totalWeight = 0
+        this.default = []
+        this.main = []
     }
 }
 
-function newDisplayItem(name,id, min, max, weight, totalWeight) {
+function newDisplayItem(name, id, min, max, weight, totalWeight) {
     let row = $("<tr>")
     let icon = $("<img>").attr('src', iconURL(id))
     let itemName = $("<td>").text(getItemName(id))
@@ -36,15 +36,11 @@ function spaceToUnder(str) {
     return str.replaceAll(' ', '_').toLowerCase()
 }
 
-function getNPCName(id) {
-    return npcNameMap[id]
-}
-
 function mapNPCItem(drops) {
     for (const npc of drops) {
 
-        let name = getNPCName(npc.ids.split(",")[0])
-        let npcObj = new npcObject(npc.ids,name)
+        let name = npcNameMap[npc.ids.split(",")[0]]
+        let npcObj = new npcObject(npc.ids, name)
 
         // Add default drops
         npc['default'].forEach(drop => {
@@ -67,9 +63,9 @@ function mapNPCItem(drops) {
                 items[name] += ("," + npc['ids'])
             else
                 items[name] = npc['ids']
-            
+
             npcObj.main.push(drop)
-            if(npcObj[name])
+            if (npcObj[name])
                 npcObj[name].push(drop)
             else
                 npcObj[name] = [drop]
@@ -78,7 +74,7 @@ function mapNPCItem(drops) {
     }
 }
 
-function mapNPCNames(npcs){
+function mapNPCNames(npcs) {
     Object.keys(npcs).forEach(npcName => {
         npcs[npcName].split(",").every(id => npcNameMap[id] = npcName)
     })
@@ -89,32 +85,31 @@ function search(e) {
     let table = document.getElementById("content")
     table.innerHTML = ""
 
-    //Search for matching ID
     Object.keys(items).forEach(itemName => {
         let itemDisplay = $("<tbody>")
         if (input.length > 3 && itemName.includes(input)) {
-            
+
             console.log(input + " is like " + itemName)
 
             let npcName = ""
             let npcIDs = items[spaceToUnder(itemName)].split(",")
 
-            for(const npc of npcIDs){
-                if (getNPCName(npc) != npcName && getNPCName(npc) != undefined){
-                    npcName = getNPCName(npc)
-                        if (allNPCs[npcName][itemName]){
+            for (const npc of npcIDs) {
+                if (npcNameMap[npc] && npcNameMap[npc] != npcName) {
+                    npcName = npcNameMap[npc]
+                    if (allNPCs[npcName][itemName]) {
                         // For monsters dropping the same ID in different ways (count) increment index
-                        try{
-                            for (const item of allNPCs[npcName][itemName]){
-                                itemDisplay.append(newDisplayItem(npcName,item.id, item.minAmount, item.maxAmount, item.weight, allNPCs[npcName].totalWeight))
+                        try {
+                            for (const item of allNPCs[npcName][itemName]) {
+                                itemDisplay.append(newDisplayItem(npcName, item.id, item.minAmount, item.maxAmount, item.weight, allNPCs[npcName].totalWeight))
                             }
-                        } catch(e) {
+                        } catch (e) {
                             console.log("error in" + e)
                         }
                     }
                 }
             }
-            if(itemDisplay[0].childElementCount > 0){
+            if (itemDisplay[0].childElementCount > 0) {
                 let h1 = $("<h1>").addClass("hover-link").append($("<div>").text(prettyName(itemName)))
                     .on('mouseenter', function () {
                         $(this).text(prettyName(itemName)).append($("<img>").attr('src', "./img/items/link.png"))
@@ -127,10 +122,10 @@ function search(e) {
                     })
 
                 table.appendChild($("<div>").append(h1)
-                                            .append($("<div>")
-                                            .addClass(debugClass)
-                                            .append($("<p>")
-                                            .text("NPC ids: " + npcIDs)))[0])
+                    .append($("<div>")
+                        .addClass(debugClass)
+                        .append($("<p>")
+                        .text("NPC ids: " + npcIDs)))[0])
 
                 itemDisplay.on('click', function (e) {
                     e = e.currentTarget
@@ -139,7 +134,6 @@ function search(e) {
                     e.className = !sortOrder
                     sortByRarity(e, !sortOrder)
                 })
-                            
                 table.append(itemDisplay[0])
             }
         }
@@ -147,8 +141,7 @@ function search(e) {
 }
 
 window.addEventListener('load', () => {
-    // Startup Init
-    let counter = 0;
+    let timeout = 0;
     let checkExist = setInterval(function () {
         if (allDrops != undefined && allNPCs != undefined && allItems != undefined) {
             clearInterval(checkExist);
@@ -157,18 +150,8 @@ window.addEventListener('load', () => {
             document.getElementsByClassName("loading")[0].setAttribute("style", "display:none;")
             mapNPCNames(allNPCs)
             mapNPCItem(allDrops)
-            
-            // Load directly linked monster if there is a search
-            if (window.location.search) {
-                document.getElementsByTagName("input")[0].value = window.location.search.substring(1).replaceAll("%20", " ")
-                search(document.getElementsByTagName("input")[0])
-            }
+            searchURLString()
         }
-
-        // If loading JSONs takes longer than 600ms, show 'Loading JSON' message 
-        if (counter > 6)
-            document.getElementsByClassName("loading")[0].setAttribute("style", "display:block;")
-        counter += 1;
+        checkTimeout(timeout++)
     }, 100);
-
 });

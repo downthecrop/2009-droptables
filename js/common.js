@@ -155,3 +155,22 @@ window.addEventListener('load', () => {
         localStorage.setItem('debug', this.checked);
     })
 })
+
+
+function checkTimeout(sec){
+    // If loading JSONs takes longer than 600ms, show 'Loading JSON' message 
+    // refresh the page on a 10 second timeout.
+    if (sec > 6) {
+        document.getElementsByClassName("loading")[0].setAttribute("style", "display:block;")
+    } else if (sec > 60) {
+        window.location.reload
+    }
+}
+
+function searchURLString(){
+    // Load directly linked monster/item if there is a search
+    if (window.location.search) {
+        document.getElementsByTagName("input")[0].value = window.location.search.substring(1).replaceAll("%20", " ")
+        search(document.getElementsByTagName("input")[0])
+    }
+}
