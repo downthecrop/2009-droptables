@@ -41,8 +41,9 @@ function search(input) {
             let npcIds = allNPCs[npcName].split(",")
             let dropGIndex = null
 
-            npcIds.every(id => {
-                if (dropMap[id]) {
+            let matched = false;
+            for(const id of npcIds){
+                if (!matched && dropMap[id]) {
 
                     dropGIndex = dropMap[id]
 
@@ -68,8 +69,9 @@ function search(input) {
                         let weight = parseFloat(allDrops[dropGIndex]['main'][j]["weight"])
                         npcEntry.append(newDisplayItem(id, min, max, weight, totalWeight))
                     }
+                    matched = true;
                 }
-            })
+            }
             if (npcEntry[0].childElementCount > 0) {
                 let h1 = $("<h1>").addClass("hover-link").append($("<div>").text(npcName))
                     .on('mouseenter', function () {
