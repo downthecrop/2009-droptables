@@ -3,7 +3,7 @@ let duplicates = []
 let filteredKeys = ["durability", "remove_head", "absorb", "bonuses", "archery_ticket_price",
     "attack_anims", "attack_audios", "weapon_interface",
     "walk_anim", "turn90cw_anim", "turn90ccw_anim", "run_anim", "stand_turn_anim", "turn180_anim",
-    "stand_anim", "stand_turn_anim", "render_anim"]
+    "stand_anim", "stand_turn_anim", "render_anim","defence_anim"]
 
 function newDisplayItem(itemObj) {
     let debugState = (debugClass == "debug-show") ? true : false;
