@@ -12,6 +12,12 @@ body{
     overflow: hidden;
   }
 
+.stat-data{
+    background-color: #605443;
+    color: white;
+    text-align: center;
+}
+
 .dot-pulse {
     position: relative;
     left: -9999px;

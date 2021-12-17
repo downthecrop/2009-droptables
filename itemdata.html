@@ -1,0 +1,27 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script src="./js/common.js"></script>
+    <title>Items Stats Tool - Search Item</title>
+</head>
+<script src="./js/itemdata.js"></script>
+<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/bootstrap.min.css">
+<div id="wrapper">
+    <center>
+        <a href="./"><img src="./img/logo.png"></a>
+        <h2>2009Scape Item Stats Tool</h2>
+    </center>
+    <input class="form-control input-lg" placeholder="Item Name" onkeyup="search(this);"></input>
+    <center>
+    <p>If you'd like to search Drop Tables click <a href="index.html">here</a></p>
+    <p><input type="checkbox" id="debug-toggle" name="debug"><lable>Show ALL Attributes</lable></p>
+    </center>
+    <div class="loading" style="display: none;">
+        <div class="stage"><h1>Loading JSON</h1></div>
+        <div class="stage"><div class="dot-pulse"></div></div>
+    </div>
+    <div id="content"></div>
+</div>
+</html>
