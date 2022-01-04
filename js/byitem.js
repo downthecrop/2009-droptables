@@ -134,7 +134,7 @@ function search(e) {
                     e = e.currentTarget
                     // Classname is used to track the sorting direction
                     let sortOrder = (e.className === 'true');
-                    e.className = !sortOrder
+                    e.className = 'true'
                     sortByRarity(e, !sortOrder)
                 })
                 table.append(itemDisplay[0])

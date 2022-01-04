@@ -22,14 +22,15 @@ function sortByRarity(table, order) {
             let xval = parseFloat(x.getAttribute("data-value"));
             let yval = parseFloat(y.getAttribute("data-value"));
             
-            if (order) {
-                // Rarest LAST
-                if (xval < yval) {
-                    shouldSwitch = true
-                    break;
-                }
+            if (!order) {
+                // We are already in order. Just invert the table.
+                $(table).each(function(){
+                    var list = $(this).children('tr');
+                    $(this).html(list.get().reverse())
+                });
+                break;
             } else {
-                if (xval > yval) {
+                if (xval < yval) {
                     shouldSwitch = true
                     break;
                 }
