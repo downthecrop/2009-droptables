@@ -25,9 +25,12 @@ function newDisplayItem(name, id, min, max, weight, totalWeight) {
         let percent = (weight / totalWeight) * 100
         rarity = $("<td>").text("1/" + (+parseFloat(100 / percent).toFixed(2).replace(/(\.0+|0+)$/, '')))
             .prop('title', parseFloat((percent).toFixed(2)) + "%")
+            .attr('data-value', parseFloat((percent).toFixed(2)))
             .addClass(rarityStyle(percent))
+
     } else {
         rarity = $("<td>").text("Always").addClass(rarityStyle(100))
+        .attr('data-value', parseFloat(100))
     }
     return row.append(npcName).append($("<td>").append(icon)).append(itemName.append(debug)).append(amount).append(rarity)[0]
 }

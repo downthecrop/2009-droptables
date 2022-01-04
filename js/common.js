@@ -7,6 +7,7 @@ let dropMap = {}
 function sortByRarity(table, order) {
     let switching = true;
     let shouldSwitch = false;
+    let c = 0;
 
     while (switching) {
         switching = false
@@ -14,29 +15,21 @@ function sortByRarity(table, order) {
         let last = rows[0].getElementsByTagName("TD").length - 1
 
         for (i = 0; i < (rows.length - 1); i++) {
+            c += 1
             let x = rows[i].getElementsByTagName("TD")[last];
             let y = rows[i + 1].getElementsByTagName("TD")[last];
 
-            // Convert text faction to see rarity
-            let xEval = parseFloat(x.innerText.split('/')[0] / x.innerText.split('/')[1])
-            let yEval = parseFloat(y.innerText.split('/')[0] / y.innerText.split('/')[1])
-
-            // Handle Always
-            if (!x.innerText.includes("/")) {
-                xEval = 999
-            }
-            if (!y.innerText.includes("/")) {
-                yEval = 999
-            }
-
+            let xval = parseFloat(x.getAttribute("data-value"));
+            let yval = parseFloat(y.getAttribute("data-value"));
+            
             if (order) {
                 // Rarest LAST
-                if (xEval < yEval) {
+                if (xval < yval) {
                     shouldSwitch = true
                     break;
                 }
             } else {
-                if (xEval > yEval) {
+                if (xval > yval) {
                     shouldSwitch = true
                     break;
                 }
@@ -48,6 +41,7 @@ function sortByRarity(table, order) {
             switching = true;
         }
     }
+    console.log("Sorted in: ",c," steps")
 }
 
 function iconURL(id) {
