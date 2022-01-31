@@ -14,6 +14,9 @@ function newDisplayItem(id, min, max, weight, totalWeight) {
     let debug = $("<div>").text("id: " + id).addClass(debugClass)
     let rarity = ""
 
+    // Set attr for faster sorting
+    amount.attr("data-value",max)
+
     // Weights
     if (weight != -1) {
         let percent = (weight / totalWeight) * 100
@@ -25,6 +28,19 @@ function newDisplayItem(id, min, max, weight, totalWeight) {
         rarity = $("<td>").text("Always").addClass(rarityStyle(100))
         .attr('data-value', parseFloat(100))
     }
+//min != max
+    if (true){
+        // expected quantity
+        let probability = (weight / totalWeight)
+        console.log("Min: ",min,"Max:",max)
+        console.log("Probability: "+probability)
+        let avg = mean(range(parseInt(min),parseInt(max)))
+        console.log("Average: "+avg)
+        console.log("Per kill average: "+(avg*probability))
+        let percent = (weight / totalWeight)
+        amount.append($("<p style='font-size:12px;'>").text((avg*percent).toFixed(2)))
+    }
+
     return row.append($("<td>").append(icon)).append(itemName.append(debug)).append(amount).append(rarity)[0]
 }
 
@@ -33,7 +49,7 @@ function search(input) {
     let table = document.getElementById("content")
     table.innerHTML = ""
 
-    //Search for matching ID
+    // Search for matching ID
     Object.keys(allNPCs).forEach(npcName => {
         if (searchStr.length > 2 && removeSpaces(npcName).includes(searchStr)) {
 
@@ -92,13 +108,37 @@ function search(input) {
                         .append($("<p>")
                             .text("ids: " + allNPCs[npcName])))[0])
 
-                npcEntry.on('click', function (e) {
-                    e = e.currentTarget
+
+
+                // Sorting Options/Col lables
+                let iconT = $("<td>").text("")
+                let itemNameT = $("<td>").text("Name")
+                let amountT = $("<td>").text("Amount")
+                let rarityT = $("<td>").text("Rarity")
+
+
+                rarityT.on('click', function (e) {
+                    console.log(e.currentTarget.parentElement.parentElement)
+                    e = e.currentTarget.parentElement.parentElement
                     // Classname is used to track the sorting direction
                     let sortOrder = (e.className === 'true');
-                    e.className = 'true'
-                    sortByRarity(e, !sortOrder)
+                    e.className = !sortOrder
+                    sortByRarity(e, !sortOrder,3)
                 })
+
+                amountT.on('click', function (e) {
+                    console.log(e.currentTarget.parentElement.parentElement)
+                    e = e.currentTarget.parentElement.parentElement
+                    // Classname is used to track the sorting direction
+                    let sortOrder = (e.className === 'true');
+                    e.className = !sortOrder
+                    sortByRarity(e, !sortOrder,2)
+                })
+
+                let titles = $("<tr>").append(iconT).append(itemNameT).append(amountT).append(rarityT)
+                npcEntry[0].prepend(titles[0])
+
+                // Add normal data to table
                 table.appendChild(npcEntry[0])
             }
         }

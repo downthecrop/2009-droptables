@@ -4,7 +4,20 @@ let allItems = null
 let allDrops = null
 let dropMap = {}
 
-function sortByRarity(table, order) {
+// Why isn't the a js builtin?
+function range(start, end) {
+    return (new Array(end - start + 1)).fill(undefined).map((_, i) => i + start);
+}
+
+function mean(numbers) {
+    var total = 0, i;
+    for (i = 0; i < numbers.length; i += 1) {
+        total += numbers[i];
+    }
+    return total / numbers.length;
+}
+
+function sortByRarity(table, order, col) {
     let switching = true;
     let shouldSwitch = false;
     let c = 0;
@@ -12,23 +25,20 @@ function sortByRarity(table, order) {
     while (switching) {
         switching = false
         rows = table.rows;
-        let last = rows[0].getElementsByTagName("TD").length - 1
 
-        for (i = 0; i < (rows.length - 1); i++) {
+        for (i = 1; i < (rows.length - 1); i++) {
             c += 1
-            let x = rows[i].getElementsByTagName("TD")[last];
-            let y = rows[i + 1].getElementsByTagName("TD")[last];
+            let x = rows[i].getElementsByTagName("TD")[col];
+            let y = rows[i + 1].getElementsByTagName("TD")[col];
 
             let xval = parseFloat(x.getAttribute("data-value"));
             let yval = parseFloat(y.getAttribute("data-value"));
             
             if (!order) {
-                // We are already in order. Just invert the table.
-                $(table).each(function(){
-                    var list = $(this).children('tr');
-                    $(this).html(list.get().reverse())
-                });
-                break;
+                if (xval > yval) {
+                    shouldSwitch = true
+                    break;
+                }
             } else {
                 if (xval < yval) {
                     shouldSwitch = true
