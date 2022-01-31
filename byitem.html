@@ -13,7 +13,7 @@
         <a href="./"><img src="./img/logo.png"></a>
         <h2>2009Scape Drop Table Tool</h2>
     </center>
-    <input class="form-control input-lg" placeholder="Item Name" onkeyup="search(this);"></input>
+    <input id="search" class="form-control input-lg" placeholder="Item Name"></input>
     <center>
     <p>If you'd like to search by NPC/Monster name click <a href="index.html">here</a></p>
     <p>Notes: RDT Slot = Rare Drop Table <a href="rdt.html">(link)</a>, Summoning Charms are rolled separately <input type="checkbox" id="debug-toggle" name="debug"><lable>Show ID's</lable></p>
@@ -23,5 +23,16 @@
         <div class="stage"><div class="dot-pulse"></div></div>
     </div>
     <div id="content"></div>
+    <script>
+        var timeoutId = 0;
+        $('#search').keypress(function () { 
+            console.log("Keydown")
+            console.log(($('#search').val()))
+            clearTimeout(timeoutId); // doesn't matter if it's 0
+            timeoutId = setTimeout(function() { 
+                search($('#search').val()) 
+            }, 300);
+        });
+    </script>
 </div>
 </html>

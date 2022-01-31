@@ -38,14 +38,18 @@ function newDisplayItem(id, min, max, weight, totalWeight) {
         console.log("Average: "+avg)
         console.log("Per kill average: "+(avg*probability))
         let percent = (weight / totalWeight)
-        amount.append($("<p style='font-size:12px;'>").text((avg*percent).toFixed(2)))
+        let v = (avg*percent)
+        if (v < 0)
+            v = avg
+        amount.append($("<div style='font-size:12px;'>").text(v.toFixed(2)).addClass(debugClass))
+        amount.attr("data-value",v)
     }
 
     return row.append($("<td>").append(icon)).append(itemName.append(debug)).append(amount).append(rarity)[0]
 }
 
 function search(input) {
-    let searchStr = removeSpaces(input.value)
+    let searchStr = removeSpaces(input)
     let table = document.getElementById("content")
     table.innerHTML = ""
 

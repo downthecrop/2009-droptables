@@ -107,6 +107,10 @@ function removeSpaces(str) {
     return str.replaceAll(' ', '').toLowerCase()
 }
 
+function spaceToUnder(str) {
+    return str.replaceAll(' ', '_').toLowerCase()
+}
+
 window.addEventListener('load', () => {
 
     async function getNPCIds() {
@@ -179,6 +183,6 @@ function searchURLString() {
     // Load directly linked monster/item if there is a search
     if (window.location.search) {
         document.getElementsByTagName("input")[0].value = window.location.search.substring(1).replaceAll("%20", " ").replace(/%27/g, "'")
-        search(document.getElementsByTagName("input")[0])
+        search($('#search').val()) 
     }
 }

@@ -45,16 +45,15 @@ function newDisplayItem(name, id, min, max, weight, totalWeight) {
         console.log("Average: "+avg)
         console.log("Per kill average: "+(avg*probability))
         let percent = (weight / totalWeight)
-        amount.append($("<div style='font-size:12px;'>").text((avg*percent).toFixed(2)).addClass(debugClass))
-        amount.attr("data-value",avg*percent)
+        let v = (avg*percent)
+        if (v < 0)
+            v = avg
+        amount.append($("<div style='font-size:12px;'>").text(v.toFixed(2)).addClass(debugClass))
+        amount.attr("data-value",v)
     }
 
     
     return row.append(npcName).append($("<td>").append(icon)).append(itemName.append(debug)).append(amount).append(rarity)[0]
-}
-
-function spaceToUnder(str) {
-    return str.replaceAll(' ', '_').toLowerCase()
 }
 
 function mapNPCItem(drops) {
@@ -102,7 +101,7 @@ function mapNPCNames(npcs) {
 }
 
 function search(e) {
-    let input = spaceToUnder(e.value)
+    let input = spaceToUnder(e)
     let table = document.getElementById("content")
     table.innerHTML = ""
 
