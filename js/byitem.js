@@ -107,7 +107,7 @@ function search(e) {
 
     Object.keys(items).forEach(itemName => {
         let itemDisplay = $("<tbody>")
-        if (input.length > 3 && itemName.includes(input)) {
+        if (itemName.includes(input)) {
 
             console.log(input + " is like " + itemName)
 
