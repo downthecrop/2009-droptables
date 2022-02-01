@@ -25,7 +25,7 @@
     <div id="content"></div>
     <script>
         var timeoutId = 0;
-        $('#search').keypress(function () { 
+        $('#search').keydown(function () { 
             console.log("Keydown")
             console.log(($('#search').val()))
             clearTimeout(timeoutId); // doesn't matter if it's 0
