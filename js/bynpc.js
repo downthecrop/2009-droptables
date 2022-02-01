@@ -55,7 +55,7 @@ function search(input) {
 
     // Search for matching ID
     Object.keys(allNPCs).forEach(npcName => {
-        if (searchStr.length > 2 && removeSpaces(npcName).includes(searchStr)) {
+        if (removeSpaces(npcName).includes(searchStr)) {
 
             console.log(searchStr + " is like " + npcName)
 
