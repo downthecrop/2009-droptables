@@ -64,6 +64,10 @@ function mapNPCItem(drops) {
 
         // Add default drops
         npc['default'].forEach(drop => {
+            if(getItemName(drop.id) == undefined){
+                console.log("Error with npc",npc," drop id: ",drop.id)
+                return
+            }
             let name = spaceToUnder(getItemName(drop.id))
             if (items[name])
                 items[name] += ("," + npc['ids'])
@@ -185,7 +189,7 @@ function search(e) {
 window.addEventListener('load', () => {
     let timeout = 0;
     let checkExist = setInterval(function () {
-        if (allDrops != undefined && allNPCs != undefined && allItems != undefined) {
+        if (allDrops && allNPCs && allItems) {
             clearInterval(checkExist);
             mapNPCNames(allNPCs)
             mapNPCItem(allDrops)
